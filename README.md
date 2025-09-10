@@ -33,6 +33,16 @@ Foi construído utilizando um conceito de [**Arquitetura Hexagonal**](https://do
 └── 📄 user.module.ts
 ```
 
+## Endpoints planejados/construídos
+
+**GET** /users/:id - Recupera informações de um usuário
+
+**POST** /users - Cadastra um usuário na base de dados da aplicação.
+
+**PATCH** /users/:id - Altera um conjunto parcial de dados de usuários.
+
+**POST** /users/authenticate - Autentica um usuário a partir de algumas crendeciais como (email/nome de usuário, senha)
+
 ## Como executar o projeto
 
 Para a execução do projeto, instale todas as dependências
