@@ -13,4 +13,8 @@ export class GetUserUseCase {
   execute(id: string): Promise<User | null> {
     return this.usersRepository.findById(id);
   }
+
+  executeByEmail(email: string): Promise<User | null> {
+    return this.usersRepository.findByEmail(email);
+  }
 }
