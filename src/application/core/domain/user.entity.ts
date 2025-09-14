@@ -1,6 +1,10 @@
 export class User {
   id: string;
-  name: string;
   email: string;
   password: string;
+  name: string;
+  city: string;
+  uf: string;
+  zipcode: string;
+  person_type: string;
 }
