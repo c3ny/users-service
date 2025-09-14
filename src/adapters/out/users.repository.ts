@@ -18,14 +18,22 @@ export class UsersRepository implements UserRepositoryPort {
   }
 
   async findById(id: string): Promise<User | null> {
-    return this.usersRepository
-      .findOneBy({ id })
-      .then((user) => (user ? UserMapper.toDomain(user) : null));
+    const user = await this.usersRepository.findOneBy({ id });
+
+    if (!user) {
+      return null;
+    }
+
+    return UserMapper.toDomain(user);
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.usersRepository
-      .findOneBy({ email })
-      .then((user) => (user ? UserMapper.toDomain(user) : null));
+    const user = await this.usersRepository.findOneBy({ email });
+
+    if (!user) {
+      return null;
+    }
+
+    return UserMapper.toDomain(user);
   }
 }
