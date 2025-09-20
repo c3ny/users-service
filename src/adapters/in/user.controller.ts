@@ -42,4 +42,17 @@ export class UsersController {
 
     return result.value;
   }
+
+  @Post('authenticate')
+  async authenticate(
+    @Body() user: Pick<User, 'email' | 'password'>,
+  ): Promise<User> {
+    const result = await this.usersService.authenticate(user);
+
+    if (!result.isSuccess) {
+      throw new HttpException(result.error, HttpStatus.BAD_REQUEST);
+    }
+
+    return result.value;
+  }
 }

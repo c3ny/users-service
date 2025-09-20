@@ -42,8 +42,6 @@ export class UsersRepository implements UserRepositoryPort {
       return null;
     }
 
-    delete user.password;
-
     return UserMapper.toDomain(user);
   }
 }

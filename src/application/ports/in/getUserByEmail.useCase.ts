@@ -7,14 +7,14 @@ import { USERS_REPOSITORY } from 'src/constants';
 
 @Injectable()
 export class GetUserByEmailUseCase
-  implements UseCase<string, Promise<Result<User | null>>>
+  implements UseCase<string, Promise<Result<User>>>
 {
   constructor(
     @Inject(USERS_REPOSITORY)
     private readonly usersRepository: UserRepositoryPort,
   ) {}
 
-  async execute(email: string): Promise<Result<User | null>> {
+  async execute(email: string): Promise<Result<User>> {
     const user = await this.usersRepository.findByEmail(email);
 
     if (!user) {
