@@ -6,8 +6,10 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
 } from '@nestjs/common';
 import { User } from 'src/application/core/domain/user.entity';
+import { ErrorsEnum } from 'src/application/core/errors/errors.enum';
 import { UsersService } from 'src/application/core/service/users.service';
 
 @Controller('/users')
@@ -19,7 +21,12 @@ export class UsersController {
     const user = await this.usersService.getUserById(id);
 
     if (!user.isSuccess) {
-      throw new HttpException(user.error, HttpStatus.BAD_REQUEST);
+      switch (user.error) {
+        case ErrorsEnum.UserNotFoundError:
+          throw new HttpException(user.error, HttpStatus.NOT_FOUND);
+        default:
+          throw new HttpException(user.error, HttpStatus.BAD_REQUEST);
+      }
     }
 
     return user.value;
@@ -31,10 +38,31 @@ export class UsersController {
 
     if (!result.isSuccess) {
       switch (result.error) {
-        case 'UserAlreadyExists':
+        case ErrorsEnum.UserAlreadyExists:
           throw new HttpException(result.error, HttpStatus.BAD_REQUEST);
-        case 'UserNotFoundError':
+        case ErrorsEnum.UserNotFoundError:
           throw new HttpException(result.error, HttpStatus.NOT_FOUND);
+        default:
+          throw new HttpException(result.error, HttpStatus.BAD_REQUEST);
+      }
+    }
+
+    return result.value;
+  }
+
+  @Put('/change-password/:id')
+  async changePassword(
+    @Param('id') id: string,
+    @Body() user: { password: string; newPassword: string },
+  ): Promise<User> {
+    const result = await this.usersService.changePassword(id, user);
+
+    if (!result.isSuccess) {
+      switch (result.error) {
+        case ErrorsEnum.UserNotFound:
+          throw new HttpException(result.error, HttpStatus.NOT_FOUND);
+        case ErrorsEnum.InvalidPassword:
+          throw new HttpException(result.error, HttpStatus.BAD_REQUEST);
         default:
           throw new HttpException(result.error, HttpStatus.BAD_REQUEST);
       }
@@ -50,7 +78,14 @@ export class UsersController {
     const result = await this.usersService.authenticate(user);
 
     if (!result.isSuccess) {
-      throw new HttpException(result.error, HttpStatus.BAD_REQUEST);
+      switch (result.error) {
+        case ErrorsEnum.InvalidPassword:
+          throw new HttpException(result.error, HttpStatus.BAD_REQUEST);
+        case ErrorsEnum.UserNotFound:
+          throw new HttpException(result.error, HttpStatus.NOT_FOUND);
+        default:
+          throw new HttpException(result.error, HttpStatus.BAD_REQUEST);
+      }
     }
 
     return result.value;

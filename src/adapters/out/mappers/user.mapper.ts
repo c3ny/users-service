@@ -18,7 +18,6 @@ export class UserMapper {
   static toPersistence(user: User): Users {
     const users = new Users();
 
-    users.id = user.id;
     users.email = user.email;
     users.password = user.password;
     users.name = user.name;

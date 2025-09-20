@@ -5,6 +5,7 @@ import { USERS_REPOSITORY } from 'src/constants';
 import { UseCase } from 'src/application/types/useCase.types';
 import { Result, ResultFactory } from 'src/application/types/result.types';
 import { GetUserByEmailUseCase } from './getUserByEmail.useCase';
+import { ErrorsEnum } from 'src/application/core/errors/errors.enum';
 
 @Injectable()
 export class CreateUserUseCase implements UseCase<User, Promise<Result<User>>> {
@@ -18,7 +19,7 @@ export class CreateUserUseCase implements UseCase<User, Promise<Result<User>>> {
     const existingUser = await this.getUserByEmailUseCase.execute(user.email);
 
     if (existingUser.isSuccess) {
-      return ResultFactory.failure('User already exists');
+      return ResultFactory.failure(ErrorsEnum.UserAlreadyExists);
     }
 
     const savedUser = await this.usersRepository.save(user);

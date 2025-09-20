@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { HashRepositoryPort } from '../../application/ports/out/hash-repository.port';
+import {
+  Hash,
+  HashRepositoryPort,
+} from '../../application/ports/out/hash-repository.port';
 import { scryptSync, randomBytes, timingSafeEqual } from 'crypto';
 
 @Injectable()
 export class HashRepository implements HashRepositoryPort {
-  hash(password: string): string {
+  hash(password: string): Hash {
     const salt = randomBytes(16).toString('hex');
 
     const hash = scryptSync(password, salt, 64).toString('hex');

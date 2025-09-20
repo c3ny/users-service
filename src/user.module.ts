@@ -9,6 +9,8 @@ import { Users } from './adapters/out/domain/user.entity';
 import { GetUserByEmailUseCase } from './application/ports/in/getUserByEmail.useCase';
 import { HashModule } from './modules/Hash/hash.module';
 import { UsersService } from './application/core/service/users.service';
+import { ChangePasswordUseCase } from './application/ports/in/changePassword.useCase';
+import { ChangeUserDataUseCase } from './application/ports/in/changeUserData.useCase';
 
 @Module({
   imports: [
@@ -30,6 +32,8 @@ import { UsersService } from './application/core/service/users.service';
     GetUserUseCase,
     GetUserByEmailUseCase,
     UsersService,
+    ChangePasswordUseCase,
+    ChangeUserDataUseCase,
     { provide: USERS_REPOSITORY, useClass: UsersRepository },
   ],
 })

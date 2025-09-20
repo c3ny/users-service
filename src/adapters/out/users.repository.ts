@@ -18,8 +18,6 @@ export class UsersRepository implements UserRepositoryPort {
 
     const savedUser = await this.usersRepository.save(userToSave);
 
-    delete savedUser.password;
-
     return savedUser;
   }
 
@@ -29,8 +27,6 @@ export class UsersRepository implements UserRepositoryPort {
     if (!user) {
       return null;
     }
-
-    delete user.password;
 
     return UserMapper.toDomain(user);
   }
@@ -43,5 +39,35 @@ export class UsersRepository implements UserRepositoryPort {
     }
 
     return UserMapper.toDomain(user);
+  }
+
+  async updatePassword(id: string, password: string): Promise<Users | null> {
+    const user = await this.usersRepository.findOneBy({ id });
+
+    if (!user) {
+      return null;
+    }
+
+    user.password = password;
+
+    return this.usersRepository.save(user);
+  }
+
+  async update(
+    id: string,
+    user: Omit<User, 'id' | 'password'>,
+  ): Promise<Users | null> {
+    const userToFind = await this.usersRepository.findOneBy({ id });
+
+    if (!userToFind) {
+      return null;
+    }
+
+    const userToUpdate = UserMapper.toPersistence({
+      ...userToFind,
+      ...user,
+    });
+
+    return this.usersRepository.save(userToUpdate);
   }
 }
