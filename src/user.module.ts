@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
 import { UsersController } from './adapters/in/user.controller';
-import { UserService } from './application/core/service/user.service';
 import { USERS_REPOSITORY } from './constants';
 import { CreateUserUseCase } from './application/ports/in/createUser.useCase';
 import { GetUserUseCase } from './application/ports/in/getUser.useCase';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersRepository } from './adapters/out/users.repository';
 import { Users } from './adapters/out/domain/user.entity';
+import { GetUserByEmailUseCase } from './application/ports/in/getUserByEmail.useCase';
+import { HashModule } from './modules/Hash/hash.module';
+import { UsersService } from './application/core/service/users.service';
 
 @Module({
   imports: [
@@ -20,12 +22,14 @@ import { Users } from './adapters/out/domain/user.entity';
       entities: [Users],
     }),
     TypeOrmModule.forFeature([Users]),
+    HashModule,
   ],
   controllers: [UsersController],
   providers: [
-    UserService,
     CreateUserUseCase,
     GetUserUseCase,
+    GetUserByEmailUseCase,
+    UsersService,
     { provide: USERS_REPOSITORY, useClass: UsersRepository },
   ],
 })

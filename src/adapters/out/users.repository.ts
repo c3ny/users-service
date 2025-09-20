@@ -13,8 +13,14 @@ export class UsersRepository implements UserRepositoryPort {
     private readonly usersRepository: Repository<Users>,
   ) {}
 
-  async save(user: User): Promise<User> {
-    return this.usersRepository.save(UserMapper.toPersistence(user));
+  async save(user: User): Promise<Omit<User, 'password'>> {
+    const userToSave = UserMapper.toPersistence(user);
+
+    const savedUser = await this.usersRepository.save(userToSave);
+
+    delete savedUser.password;
+
+    return savedUser;
   }
 
   async findById(id: string): Promise<User | null> {
@@ -23,6 +29,8 @@ export class UsersRepository implements UserRepositoryPort {
     if (!user) {
       return null;
     }
+
+    delete user.password;
 
     return UserMapper.toDomain(user);
   }
@@ -33,6 +41,8 @@ export class UsersRepository implements UserRepositoryPort {
     if (!user) {
       return null;
     }
+
+    delete user.password;
 
     return UserMapper.toDomain(user);
   }

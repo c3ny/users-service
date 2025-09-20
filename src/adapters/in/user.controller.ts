@@ -1,18 +1,45 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { User } from 'src/application/core/domain/user.entity';
-import { UserService } from 'src/application/core/service/user.service';
+import { UsersService } from 'src/application/core/service/users.service';
 
 @Controller('/users')
 export class UsersController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Get(':id')
-  getUserById(@Param('id') id: string): Promise<User | null> {
-    return this.userService.getUserById(id);
+  async getUserById(@Param('id') id: string): Promise<User | null> {
+    const user = await this.usersService.getUserById(id);
+
+    if (!user.isSuccess) {
+      throw new HttpException(user.error, HttpStatus.BAD_REQUEST);
+    }
+
+    return user.value;
   }
 
   @Post()
-  createUser(@Body() user: User): Promise<User> {
-    return this.userService.save(user);
+  async createUser(@Body() user: Omit<User, 'id'>): Promise<User | null> {
+    const result = await this.usersService.createUser(user);
+
+    if (!result.isSuccess) {
+      switch (result.error) {
+        case 'UserAlreadyExists':
+          throw new HttpException(result.error, HttpStatus.BAD_REQUEST);
+        case 'UserNotFoundError':
+          throw new HttpException(result.error, HttpStatus.NOT_FOUND);
+        default:
+          throw new HttpException(result.error, HttpStatus.BAD_REQUEST);
+      }
+    }
+
+    return result.value;
   }
 }

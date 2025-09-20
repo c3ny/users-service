@@ -9,7 +9,7 @@ export class Users {
   email: string;
 
   @Column()
-  password: string;
+  password?: string;
 
   @Column()
   name: string;
@@ -20,9 +20,11 @@ export class Users {
   @Column()
   uf: string;
 
-  @Column()
-  zipcode: string;
+  @Column({ nullable: true })
+  zipcode?: string;
 
-  @Column()
-  person_type: string;
+  @Column({
+    name: 'person_type',
+  })
+  personType: string;
 }

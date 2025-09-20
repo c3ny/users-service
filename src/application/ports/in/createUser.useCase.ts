@@ -2,23 +2,27 @@ import { Inject, Injectable } from '@nestjs/common';
 import { User } from 'src/application/core/domain/user.entity';
 import { UserRepositoryPort } from '../out/users-repository.port';
 import { USERS_REPOSITORY } from 'src/constants';
-import { GetUserUseCase } from './getUser.useCase';
+import { UseCase } from 'src/application/types/useCase.types';
+import { Result, ResultFactory } from 'src/application/types/result.types';
+import { GetUserByEmailUseCase } from './getUserByEmail.useCase';
 
 @Injectable()
-export class CreateUserUseCase {
+export class CreateUserUseCase implements UseCase<User, Promise<Result<User>>> {
   constructor(
     @Inject(USERS_REPOSITORY)
     private readonly usersRepository: UserRepositoryPort,
-    private readonly getUserUseCase: GetUserUseCase,
+    private readonly getUserByEmailUseCase: GetUserByEmailUseCase,
   ) {}
 
-  async execute(user: User): Promise<User> {
-    const existingUser = await this.getUserUseCase.executeByEmail(user.email);
+  async execute(user: Omit<User, 'id'>): Promise<Result<User>> {
+    const existingUser = await this.getUserByEmailUseCase.execute(user.email);
 
-    if (existingUser !== null) {
-      throw new Error('User already exists');
+    if (existingUser.isSuccess) {
+      return ResultFactory.failure('User already exists');
     }
 
-    return this.usersRepository.save(user);
+    const savedUser = await this.usersRepository.save(user);
+
+    return ResultFactory.success(savedUser);
   }
 }

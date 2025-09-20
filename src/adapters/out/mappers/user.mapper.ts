@@ -11,20 +11,22 @@ export class UserMapper {
       city: users.city,
       uf: users.uf,
       zipcode: users.zipcode,
-      person_type: users.person_type,
+      personType: users.personType,
     };
   }
 
   static toPersistence(user: User): Users {
     const users = new Users();
+
     users.id = user.id;
     users.email = user.email;
     users.password = user.password;
     users.name = user.name;
     users.city = user.city;
     users.uf = user.uf;
-    users.zipcode = user.zipcode;
-    users.person_type = user.person_type;
+    users.zipcode = user.zipcode ?? '';
+    users.personType = user.personType;
+
     return users;
   }
 }
