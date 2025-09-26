@@ -8,7 +8,7 @@ import {
 import { Users } from './user.entity';
 
 @Entity('donor')
-export class Donor {
+export class Donors {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

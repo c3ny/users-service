@@ -7,10 +7,13 @@ import {
   Param,
   Post,
   Put,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { User } from 'src/application/core/domain/user.entity';
 import { ErrorsEnum } from 'src/application/core/errors/errors.enum';
 import { UsersService } from 'src/application/core/service/users.service';
+import { CreateUserRequest } from 'src/application/types/user.types';
 
 @Controller('/users')
 export class UsersController {
@@ -18,22 +21,25 @@ export class UsersController {
 
   @Get(':id')
   async getUserById(@Param('id') id: string): Promise<User | null> {
-    const user = await this.usersService.getUserById(id);
+    const result = await this.usersService.getUserById(id);
 
-    if (!user.isSuccess) {
-      switch (user.error) {
+    if (!result.isSuccess) {
+      switch (result.error) {
         case ErrorsEnum.UserNotFoundError:
-          throw new HttpException(user.error, HttpStatus.NOT_FOUND);
+          throw new HttpException(result.error, HttpStatus.NOT_FOUND);
         default:
-          throw new HttpException(user.error, HttpStatus.BAD_REQUEST);
+          throw new HttpException(result.error, HttpStatus.BAD_REQUEST);
       }
     }
 
-    return user.value;
+    return result.value;
   }
 
   @Post()
-  async createUser(@Body() user: Omit<User, 'id'>): Promise<User | null> {
+  async createUser(
+    @Body() user: CreateUserRequest,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<User | null> {
     const result = await this.usersService.createUser(user);
 
     if (!result.isSuccess) {
@@ -47,15 +53,19 @@ export class UsersController {
       }
     }
 
+    res.status(
+      result.isPartialSuccess ? HttpStatus.PARTIAL_CONTENT : HttpStatus.CREATED,
+    );
+
     return result.value;
   }
 
   @Put('/change-password/:id')
   async changePassword(
     @Param('id') id: string,
-    @Body() user: { password: string; newPassword: string },
+    @Body() passwords: { old: string; new: string },
   ): Promise<User> {
-    const result = await this.usersService.changePassword(id, user);
+    const result = await this.usersService.changePassword(id, passwords);
 
     if (!result.isSuccess) {
       switch (result.error) {

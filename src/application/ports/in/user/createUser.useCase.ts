@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { User } from 'src/application/core/domain/user.entity';
-import { UserRepositoryPort } from '../out/users-repository.port';
+import { UserRepositoryPort } from '../../out/users-repository.port';
 import { USERS_REPOSITORY } from 'src/constants';
 import { UseCase } from 'src/application/types/useCase.types';
 import { Result, ResultFactory } from 'src/application/types/result.types';

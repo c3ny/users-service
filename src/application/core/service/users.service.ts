@@ -1,13 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { GetUserUseCase } from 'src/application/ports/in/getUser.useCase';
+import { GetUserUseCase } from 'src/application/ports/in/user/getUser.useCase';
 import { User } from '../domain/user.entity';
 import { Result, ResultFactory } from 'src/application/types/result.types';
-import { CreateUserUseCase } from 'src/application/ports/in/createUser.useCase';
+import { CreateUserUseCase } from 'src/application/ports/in/user/createUser.useCase';
 import { HashStringUseCase } from 'src/modules/Hash/application/ports/in/hashString.useCase';
-import { GetUserByEmailUseCase } from 'src/application/ports/in/getUserByEmail.useCase';
+import { GetUserByEmailUseCase } from 'src/application/ports/in/user/getUserByEmail.useCase';
 import { CompareHashUseCase } from 'src/modules/Hash/application/ports/in/compareHash.useCase';
-import { ChangePasswordUseCase } from 'src/application/ports/in/changePassword.useCase';
+import { ChangePasswordUseCase } from 'src/application/ports/in/user/changePassword.useCase';
 import { ErrorsEnum } from '../errors/errors.enum';
+import { CreateDonorUseCase } from 'src/application/ports/in/donor/createDonor.useCase';
+import {
+  CreateUserRequest,
+  PersonType,
+} from 'src/application/types/user.types';
 
 @Injectable()
 export class UsersService {
@@ -18,6 +23,7 @@ export class UsersService {
     private readonly compareHashUseCase: CompareHashUseCase,
     private readonly getUserByEmailUseCase: GetUserByEmailUseCase,
     private readonly changePasswordUseCase: ChangePasswordUseCase,
+    private readonly createDonorUseCase: CreateDonorUseCase,
   ) {}
 
   async getUserById(id: string): Promise<Result<User>> {
@@ -32,7 +38,7 @@ export class UsersService {
     return ResultFactory.success(user.value);
   }
 
-  async createUser(user: Omit<User, 'id'>): Promise<Result<User>> {
+  async createUser(user: CreateUserRequest): Promise<Result<User>> {
     const hashedPassword = this.hashStringUseCase.execute(user?.password ?? '');
 
     user.password = hashedPassword;
@@ -41,6 +47,19 @@ export class UsersService {
 
     if (!result.isSuccess) {
       return ResultFactory.failure(result.error);
+    }
+
+    if (user.personType === PersonType.DONOR) {
+      const donor = await this.createDonorUseCase.execute({
+        cpf: user.cpf,
+        bloodType: user.bloodType,
+        birthDate: user.birthDate,
+        fkUserId: result.value.id,
+      });
+
+      if (!donor.isSuccess) {
+        return ResultFactory.partialSuccess(result.value);
+      }
     }
 
     return ResultFactory.success(result.value);
@@ -71,7 +90,7 @@ export class UsersService {
 
   async changePassword(
     id: string,
-    user: { password: string; newPassword: string },
+    passwords: { old: string; new: string },
   ): Promise<Result<User>> {
     const getUser = await this.getUserUseCase.execute(id);
 
@@ -80,7 +99,7 @@ export class UsersService {
     }
 
     const verifyPassword = this.compareHashUseCase.execute({
-      password: user.password,
+      password: passwords.old,
       hash: getUser.value.password ?? '',
     });
 
@@ -88,7 +107,7 @@ export class UsersService {
       return ResultFactory.failure(ErrorsEnum.InvalidPassword);
     }
 
-    const newPassword = this.hashStringUseCase.execute(user.newPassword);
+    const newPassword = this.hashStringUseCase.execute(passwords.new);
 
     const result = await this.changePasswordUseCase.execute({
       id,
