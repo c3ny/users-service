@@ -13,6 +13,7 @@ import {
   CreateUserRequest,
   PersonType,
 } from 'src/application/types/user.types';
+import { CreateCompanyUseCase } from 'src/application/ports/in/company/createCompany.useCase';
 
 @Injectable()
 export class UsersService {
@@ -24,6 +25,7 @@ export class UsersService {
     private readonly getUserByEmailUseCase: GetUserByEmailUseCase,
     private readonly changePasswordUseCase: ChangePasswordUseCase,
     private readonly createDonorUseCase: CreateDonorUseCase,
+    private readonly createCompanyUseCase: CreateCompanyUseCase,
   ) {}
 
   async getUserById(id: string): Promise<Result<User>> {
@@ -49,16 +51,38 @@ export class UsersService {
       return ResultFactory.failure(result.error);
     }
 
-    if (user.personType === PersonType.DONOR) {
-      const donor = await this.createDonorUseCase.execute({
-        cpf: user.cpf,
-        bloodType: user.bloodType,
-        birthDate: user.birthDate,
-        fkUserId: result.value.id,
-      });
+    if (!user.personType) {
+      return ResultFactory.failure(ErrorsEnum.UserNotFoundError);
+    }
 
-      if (!donor.isSuccess) {
-        return ResultFactory.partialSuccess(result.value);
+    switch (user.personType) {
+      case PersonType.DONOR: {
+        const donor = await this.createDonorUseCase.execute({
+          cpf: user.cpf,
+          bloodType: user.bloodType,
+          birthDate: user.birthDate,
+          fkUserId: result.value.id,
+        });
+
+        if (!donor.isSuccess) {
+          return ResultFactory.partialSuccess(result.value);
+        }
+
+        break;
+      }
+      case PersonType.COMPANY: {
+        const company = await this.createCompanyUseCase.execute({
+          cnpj: user.cnpj,
+          institutionName: user.institutionName,
+          cnes: user.cnes,
+          fkUserId: result.value.id,
+        });
+
+        if (!company.isSuccess) {
+          return ResultFactory.partialSuccess(result.value);
+        }
+
+        break;
       }
     }
 

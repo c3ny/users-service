@@ -1,3 +1,3 @@
 export const USERS_REPOSITORY = Symbol('USERS_REPOSITORY');
-
+export const COMPANY_REPOSITORY = Symbol('COMPANY_REPOSITORY');
 export const DONOR_REPOSITORY = Symbol('DONOR_REPOSITORY');

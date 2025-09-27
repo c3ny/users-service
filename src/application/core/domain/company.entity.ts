@@ -3,4 +3,5 @@ export class Company {
   cnpj: string;
   institutionName: string;
   cnes: string;
+  fkUserId: string;
 }

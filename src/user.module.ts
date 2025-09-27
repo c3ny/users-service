@@ -1,6 +1,10 @@
 import { Module } from '@nestjs/common';
 import { UsersController } from './adapters/in/user.controller';
-import { DONOR_REPOSITORY, USERS_REPOSITORY } from './constants';
+import {
+  COMPANY_REPOSITORY,
+  DONOR_REPOSITORY,
+  USERS_REPOSITORY,
+} from './constants';
 import { CreateUserUseCase } from './application/ports/in/user/createUser.useCase';
 import { GetUserUseCase } from './application/ports/in/user/getUser.useCase';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -14,6 +18,9 @@ import { ChangeUserDataUseCase } from './application/ports/in/user/changeUserDat
 import { DonorRepository } from './adapters/out/donor.repository';
 import { Donors } from './adapters/out/domain/donor.entity';
 import { CreateDonorUseCase } from './application/ports/in/donor/createDonor.useCase';
+import { Companies } from './adapters/out/domain/company.entity';
+import { CompanyRepository } from './adapters/out/company.repository';
+import { CreateCompanyUseCase } from './application/ports/in/company/createCompany.useCase';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -23,9 +30,9 @@ import { CreateDonorUseCase } from './application/ports/in/donor/createDonor.use
       username: process.env.POSTGRES_USERNAME,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DATABASE,
-      entities: [Users, Donors],
+      entities: [Users, Donors, Companies],
     }),
-    TypeOrmModule.forFeature([Users, Donors]),
+    TypeOrmModule.forFeature([Users, Donors, Companies]),
     HashModule,
   ],
   controllers: [UsersController],
@@ -37,8 +44,10 @@ import { CreateDonorUseCase } from './application/ports/in/donor/createDonor.use
     ChangePasswordUseCase,
     ChangeUserDataUseCase,
     CreateDonorUseCase,
+    CreateCompanyUseCase,
     { provide: USERS_REPOSITORY, useClass: UsersRepository },
     { provide: DONOR_REPOSITORY, useClass: DonorRepository },
+    { provide: COMPANY_REPOSITORY, useClass: CompanyRepository },
   ],
 })
 export class AppModule {}
