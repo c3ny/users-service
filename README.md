@@ -190,8 +190,18 @@ providers: [
 
 1. **Clone o repositório e instale as dependências:**
 
+SSH >
+
 ```bash
-git clone <repository-url>
+git clone git@github.com:c3ny/users-service.git
+cd users-service
+npm install
+```
+
+HTTPS:
+
+```bash
+git clone https://github.com/c3ny/users-service.git
 cd users-service
 npm install
 ```
