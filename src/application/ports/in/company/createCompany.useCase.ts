@@ -2,10 +2,11 @@ import { CompanyRepositoryPort } from '../../out/company-repository.port';
 import { UseCase } from 'src/application/types/useCase.types';
 import { Company } from 'src/application/core/domain/company.entity';
 import { Result, ResultFactory } from 'src/application/types/result.types';
-import { Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { COMPANY_REPOSITORY } from 'src/constants';
 import { ErrorsEnum } from 'src/application/core/errors/errors.enum';
 
+@Injectable()
 export class CreateCompanyUseCase
   implements UseCase<Company, Promise<Result<Company>>>
 {

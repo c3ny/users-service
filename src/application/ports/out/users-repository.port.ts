@@ -6,4 +6,8 @@ export interface UserRepositoryPort {
   findById(id: string): Promise<User | null>;
   findByEmail(email: string): Promise<User | null>;
   updatePassword(id: string, password: string): Promise<Users | null>;
+  update(
+    id: string,
+    user: Omit<User, 'id' | 'password'>,
+  ): Promise<Users | null>;
 }
