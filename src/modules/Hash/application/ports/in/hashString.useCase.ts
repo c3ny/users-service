@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UseCase } from 'src/application/types/useCase.types';
+import { UseCase } from '@/application/types/useCase.types';
 import { HashRepositoryPort } from '../out/hash-repository.port';
-import { HASH_REPOSITORY } from 'src/modules/Hash/constants';
+import { HASH_REPOSITORY } from '@/modules/Hash/constants';
 
 @Injectable()
 export class HashStringUseCase implements UseCase<string, string> {

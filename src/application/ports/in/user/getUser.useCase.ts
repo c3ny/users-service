@@ -1,10 +1,10 @@
-import { USERS_REPOSITORY } from 'src/constants';
+import { USERS_REPOSITORY } from '@/constants';
 import { UserRepositoryPort } from '../../out/users-repository.port';
 import { Inject, Injectable } from '@nestjs/common';
-import { User } from 'src/application/core/domain/user.entity';
-import { UseCase } from 'src/application/types/useCase.types';
-import { Result, ResultFactory } from 'src/application/types/result.types';
-import { ErrorsEnum } from 'src/application/core/errors/errors.enum';
+import { User } from '@/application/core/domain/user.entity';
+import { UseCase } from '@/application/types/useCase.types';
+import { Result, ResultFactory } from '@/application/types/result.types';
+import { ErrorsEnum } from '@/application/core/errors/errors.enum';
 
 @Injectable()
 export class GetUserUseCase implements UseCase<string, Promise<Result<User>>> {

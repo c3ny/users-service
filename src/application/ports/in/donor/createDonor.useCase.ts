@@ -1,9 +1,9 @@
-import { UseCase } from 'src/application/types/useCase.types';
+import { UseCase } from '@/application/types/useCase.types';
 import { DonorRepositoryPort } from '../../out/donor-repository.port';
-import { Donor } from 'src/application/core/domain/donor.entity';
-import { Result, ResultFactory } from 'src/application/types/result.types';
+import { Donor } from '@/application/core/domain/donor.entity';
+import { Result, ResultFactory } from '@/application/types/result.types';
 import { Inject } from '@nestjs/common';
-import { DONOR_REPOSITORY } from 'src/constants';
+import { DONOR_REPOSITORY } from '@/constants';
 
 export class CreateDonorUseCase
   implements UseCase<Donor, Promise<Result<Donor>>>

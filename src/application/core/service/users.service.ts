@@ -1,19 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { GetUserUseCase } from 'src/application/ports/in/user/getUser.useCase';
+import { GetUserUseCase } from '@/application/ports/in/user/getUser.useCase';
 import { User } from '../domain/user.entity';
-import { Result, ResultFactory } from 'src/application/types/result.types';
-import { CreateUserUseCase } from 'src/application/ports/in/user/createUser.useCase';
-import { HashStringUseCase } from 'src/modules/Hash/application/ports/in/hashString.useCase';
-import { GetUserByEmailUseCase } from 'src/application/ports/in/user/getUserByEmail.useCase';
-import { CompareHashUseCase } from 'src/modules/Hash/application/ports/in/compareHash.useCase';
-import { ChangePasswordUseCase } from 'src/application/ports/in/user/changePassword.useCase';
+import { Result, ResultFactory } from '@/application/types/result.types';
+import { CreateUserUseCase } from '@/application/ports/in/user/createUser.useCase';
+import { HashStringUseCase } from '@/modules/Hash/application/ports/in/hashString.useCase';
+import { GetUserByEmailUseCase } from '@/application/ports/in/user/getUserByEmail.useCase';
+import { CompareHashUseCase } from '@/modules/Hash/application/ports/in/compareHash.useCase';
+import { ChangePasswordUseCase } from '@/application/ports/in/user/changePassword.useCase';
 import { ErrorsEnum } from '../errors/errors.enum';
-import { CreateDonorUseCase } from 'src/application/ports/in/donor/createDonor.useCase';
-import {
-  CreateUserRequest,
-  PersonType,
-} from 'src/application/types/user.types';
-import { CreateCompanyUseCase } from 'src/application/ports/in/company/createCompany.useCase';
+import { CreateDonorUseCase } from '@/application/ports/in/donor/createDonor.useCase';
+import { CreateUserRequest, PersonType } from '@/application/types/user.types';
+import { CreateCompanyUseCase } from '@/application/ports/in/company/createCompany.useCase';
 
 @Injectable()
 export class UsersService {

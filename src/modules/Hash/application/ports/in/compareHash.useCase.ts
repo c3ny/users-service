@@ -1,7 +1,7 @@
 import { UseCase } from 'src/application/types/useCase.types';
 import { HashRepositoryPort } from '../out/hash-repository.port';
 import { Inject, Injectable } from '@nestjs/common';
-import { HASH_REPOSITORY } from 'src/modules/Hash/constants';
+import { HASH_REPOSITORY } from '@/modules/Hash/constants';
 
 export type CompareHashUseCaseParams = {
   password: string;
