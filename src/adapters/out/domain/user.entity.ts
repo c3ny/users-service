@@ -27,4 +27,10 @@ export class Users {
     name: 'person_type',
   })
   personType: string;
+
+  @Column({
+    name: 'avatar_path',
+    nullable: true,
+  })
+  avatarPath?: string;
 }

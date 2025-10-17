@@ -10,4 +10,5 @@ export interface UserRepositoryPort {
     id: string,
     user: Omit<User, 'id' | 'password'>,
   ): Promise<Users | null>;
+  updateAvatar(id: string, avatarPath: string): Promise<User | null>;
 }

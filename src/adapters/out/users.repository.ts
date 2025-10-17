@@ -70,4 +70,18 @@ export class UsersRepository implements UserRepositoryPort {
 
     return this.usersRepository.save(userToUpdate);
   }
+
+  async updateAvatar(id: string, avatarPath: string): Promise<User | null> {
+    const user = await this.usersRepository.findOneBy({ id });
+
+    if (!user) {
+      return null;
+    }
+
+    user.avatarPath = avatarPath;
+
+    const savedUser = await this.usersRepository.save(user);
+
+    return UserMapper.toDomain(savedUser);
+  }
 }

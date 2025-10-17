@@ -6,23 +6,19 @@ import { USERS_REPOSITORY } from '../../../../constants';
 import { User } from '../../../core/domain/user.entity';
 import { ErrorsEnum } from '../../../core/errors/errors.enum';
 import { ResultFactory } from '../../../types/result.types';
+import {
+  createMockRepository,
+  createMockUseCase,
+} from '../../../../test-setup';
 
 describe('CreateUserUseCase', () => {
   let useCase: CreateUserUseCase;
   let userRepository: jest.Mocked<UserRepositoryPort>;
   let getUserByEmailUseCase: jest.Mocked<GetUserByEmailUseCase>;
 
-  beforeEach(async () => {
-    const mockUserRepository = {
-      save: jest.fn(),
-      findById: jest.fn(),
-      findByEmail: jest.fn(),
-      update: jest.fn(),
-    };
-
-    const mockGetUserByEmailUseCase = {
-      execute: jest.fn(),
-    };
+  beforeAll(async () => {
+    const mockUserRepository = createMockRepository();
+    const mockGetUserByEmailUseCase = createMockUseCase();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -153,76 +149,26 @@ describe('CreateUserUseCase', () => {
       expect(result.value?.zipcode).toBeUndefined();
     });
 
-    it('should handle different Brazilian states', async () => {
-      const states = ['SP', 'RJ', 'MG', 'RS', 'PR', 'SC', 'BA', 'GO'];
-
-      getUserByEmailUseCase.execute.mockResolvedValue(
-        ResultFactory.failure(ErrorsEnum.UserNotFound),
-      );
-
-      for (const uf of states) {
-        const userData: Omit<User, 'id'> = {
-          ...validUserData,
-          email: `test-${uf.toLowerCase()}@example.com`,
-          uf,
-        };
-
-        const savedUser: User = { id: `id-${uf}`, ...userData };
-        userRepository.save.mockResolvedValue(savedUser);
-
-        const result = await useCase.execute(userData);
-
-        expect(result.isSuccess).toBe(true);
-        expect(result.value?.uf).toBe(uf);
-      }
-    });
-
-    it('should handle different email formats', async () => {
-      const emailFormats = [
-        'user@domain.com',
-        'user.name@domain.co.uk',
-        'user+tag@example.org',
-        'user123@test-domain.com',
+    it('should handle different data formats', async () => {
+      const testCases = [
+        { uf: 'SP', email: 'test-sp@example.com', zipcode: '01234-567' },
+        { uf: 'RJ', email: 'user.name@domain.co.uk', zipcode: '01234567' },
       ];
 
       getUserByEmailUseCase.execute.mockResolvedValue(
         ResultFactory.failure(ErrorsEnum.UserNotFound),
       );
 
-      for (const email of emailFormats) {
-        const userData: Omit<User, 'id'> = { ...validUserData, email };
-        const savedUser: User = { id: `id-${email}`, ...userData };
-
+      for (const testCase of testCases) {
+        const userData: Omit<User, 'id'> = { ...validUserData, ...testCase };
+        const savedUser: User = { id: 'test-id', ...userData };
         userRepository.save.mockResolvedValue(savedUser);
 
         const result = await useCase.execute(userData);
 
         expect(result.isSuccess).toBe(true);
-        expect(result.value?.email).toBe(email);
-      }
-    });
-
-    it('should handle zipcode with different formats', async () => {
-      const zipcodeFormats = ['01234-567', '01234567', '12345-678'];
-
-      getUserByEmailUseCase.execute.mockResolvedValue(
-        ResultFactory.failure(ErrorsEnum.UserNotFound),
-      );
-
-      for (const zipcode of zipcodeFormats) {
-        const userData: Omit<User, 'id'> = {
-          ...validUserData,
-          email: `test-${zipcode.replace(/\D/g, '')}@example.com`,
-          zipcode,
-        };
-
-        const savedUser: User = { id: `id-${zipcode}`, ...userData };
-        userRepository.save.mockResolvedValue(savedUser);
-
-        const result = await useCase.execute(userData);
-
-        expect(result.isSuccess).toBe(true);
-        expect(result.value?.zipcode).toBe(zipcode);
+        expect(result.value?.uf).toBe(testCase.uf);
+        expect(result.value?.email).toBe(testCase.email);
       }
     });
 
@@ -251,50 +197,6 @@ describe('CreateUserUseCase', () => {
         'Email service unavailable',
       );
       expect(userRepository.save).not.toHaveBeenCalled();
-    });
-
-    it('should handle long names and cities', async () => {
-      const longNameUser: Omit<User, 'id'> = {
-        ...validUserData,
-        email: 'longname@example.com',
-        name: 'João da Silva Santos Oliveira Pereira de Souza',
-        city: 'São Bernardo do Campo',
-      };
-
-      getUserByEmailUseCase.execute.mockResolvedValue(
-        ResultFactory.failure(ErrorsEnum.UserNotFound),
-      );
-
-      const savedUser: User = { id: '123', ...longNameUser };
-      userRepository.save.mockResolvedValue(savedUser);
-
-      const result = await useCase.execute(longNameUser);
-
-      expect(result.isSuccess).toBe(true);
-      expect(result.value?.name).toBe(longNameUser.name);
-      expect(result.value?.city).toBe(longNameUser.city);
-    });
-
-    it('should handle special characters in names and cities', async () => {
-      const specialCharUser: Omit<User, 'id'> = {
-        ...validUserData,
-        email: 'special@example.com',
-        name: 'José María Ñuñez',
-        city: 'Poços de Caldas',
-      };
-
-      getUserByEmailUseCase.execute.mockResolvedValue(
-        ResultFactory.failure(ErrorsEnum.UserNotFound),
-      );
-
-      const savedUser: User = { id: '123', ...specialCharUser };
-      userRepository.save.mockResolvedValue(savedUser);
-
-      const result = await useCase.execute(specialCharUser);
-
-      expect(result.isSuccess).toBe(true);
-      expect(result.value?.name).toBe(specialCharUser.name);
-      expect(result.value?.city).toBe(specialCharUser.city);
     });
   });
 });

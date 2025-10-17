@@ -21,6 +21,7 @@ import { CreateDonorUseCase } from './application/ports/in/donor/createDonor.use
 import { Companies } from './adapters/out/domain/company.entity';
 import { CompanyRepository } from './adapters/out/company.repository';
 import { CreateCompanyUseCase } from './application/ports/in/company/createCompany.useCase';
+import { UpdateUserAvatarUseCase } from './application/ports/in/user/updateUserAvatar.useCase';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -45,6 +46,7 @@ import { CreateCompanyUseCase } from './application/ports/in/company/createCompa
     ChangeUserDataUseCase,
     CreateDonorUseCase,
     CreateCompanyUseCase,
+    UpdateUserAvatarUseCase,
     { provide: USERS_REPOSITORY, useClass: UsersRepository },
     { provide: DONOR_REPOSITORY, useClass: DonorRepository },
     { provide: COMPANY_REPOSITORY, useClass: CompanyRepository },

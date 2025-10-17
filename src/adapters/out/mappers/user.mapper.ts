@@ -12,6 +12,7 @@ export class UserMapper {
       uf: users.uf,
       zipcode: users.zipcode,
       personType: users.personType,
+      avatarPath: users.avatarPath,
     };
   }
 
@@ -25,6 +26,7 @@ export class UserMapper {
     users.uf = user.uf;
     users.zipcode = user.zipcode ?? '';
     users.personType = user.personType;
+    users.avatarPath = user.avatarPath;
 
     return users;
   }

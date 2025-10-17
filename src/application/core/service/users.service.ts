@@ -11,6 +11,8 @@ import { ErrorsEnum } from '../errors/errors.enum';
 import { CreateDonorUseCase } from '@/application/ports/in/donor/createDonor.useCase';
 import { CreateUserRequest, PersonType } from '@/application/types/user.types';
 import { CreateCompanyUseCase } from '@/application/ports/in/company/createCompany.useCase';
+import { GenerateJwtUseCase } from '@/modules/Hash/application/ports/in/generateJwt.useCase';
+import { UpdateUserAvatarUseCase } from '@/application/ports/in/user/updateUserAvatar.useCase';
 
 @Injectable()
 export class UsersService {
@@ -23,6 +25,8 @@ export class UsersService {
     private readonly changePasswordUseCase: ChangePasswordUseCase,
     private readonly createDonorUseCase: CreateDonorUseCase,
     private readonly createCompanyUseCase: CreateCompanyUseCase,
+    private readonly generateJwtUseCase: GenerateJwtUseCase,
+    private readonly updateUserAvatarUseCase: UpdateUserAvatarUseCase,
   ) {}
 
   async getUserById(id: string): Promise<Result<User>> {
@@ -88,7 +92,7 @@ export class UsersService {
 
   async authenticate(
     user: Pick<User, 'email' | 'password'>,
-  ): Promise<Result<User>> {
+  ): Promise<Result<{ user: User; token: string }>> {
     const findByEmail = await this.getUserByEmailUseCase.execute(user.email);
 
     if (!findByEmail.isSuccess) {
@@ -106,7 +110,16 @@ export class UsersService {
 
     delete findByEmail.value.password;
 
-    return ResultFactory.success(findByEmail.value);
+    const token = this.generateJwtUseCase.execute({
+      email: findByEmail.value.email,
+      id: findByEmail.value.id,
+      personType: findByEmail.value.personType,
+    });
+
+    return ResultFactory.success({
+      user: findByEmail.value,
+      token,
+    });
   }
 
   async changePassword(
@@ -138,6 +151,24 @@ export class UsersService {
     if (!result.isSuccess) {
       return ResultFactory.failure(result.error);
     }
+
+    return ResultFactory.success(result.value);
+  }
+
+  async uploadAvatar(
+    userId: string,
+    avatarPath: string,
+  ): Promise<Result<User>> {
+    const result = await this.updateUserAvatarUseCase.execute({
+      userId,
+      avatarPath,
+    });
+
+    if (!result.isSuccess) {
+      return ResultFactory.failure(result.error);
+    }
+
+    delete result.value.password;
 
     return ResultFactory.success(result.value);
   }

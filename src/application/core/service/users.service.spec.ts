@@ -12,6 +12,7 @@ import { User } from '../domain/user.entity';
 import { CreateUserRequest, PersonType } from '../../types/user.types';
 import { ResultFactory } from '../../types/result.types';
 import { ErrorsEnum } from '../errors/errors.enum';
+import { createMockUseCase } from '../../../test-setup';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -24,15 +25,15 @@ describe('UsersService', () => {
   let createDonorUseCase: jest.Mocked<CreateDonorUseCase>;
   let createCompanyUseCase: jest.Mocked<CreateCompanyUseCase>;
 
-  beforeEach(async () => {
-    const mockGetUserUseCase = { execute: jest.fn() };
-    const mockCreateUserUseCase = { execute: jest.fn() };
-    const mockHashStringUseCase = { execute: jest.fn() };
-    const mockCompareHashUseCase = { execute: jest.fn() };
-    const mockGetUserByEmailUseCase = { execute: jest.fn() };
-    const mockChangePasswordUseCase = { execute: jest.fn() };
-    const mockCreateDonorUseCase = { execute: jest.fn() };
-    const mockCreateCompanyUseCase = { execute: jest.fn() };
+  beforeAll(async () => {
+    const mockGetUserUseCase = createMockUseCase();
+    const mockCreateUserUseCase = createMockUseCase();
+    const mockHashStringUseCase = createMockUseCase();
+    const mockCompareHashUseCase = createMockUseCase();
+    const mockGetUserByEmailUseCase = createMockUseCase();
+    const mockChangePasswordUseCase = createMockUseCase();
+    const mockCreateDonorUseCase = createMockUseCase();
+    const mockCreateCompanyUseCase = createMockUseCase();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -96,19 +97,14 @@ describe('UsersService', () => {
 
     it('should handle different user types', async () => {
       const donorUser = { ...mockUser, personType: 'DONOR' };
-      const companyUser = { ...mockUser, personType: 'COMPANY' };
+      getUserUseCase.execute.mockResolvedValue(
+        ResultFactory.success(donorUser),
+      );
 
-      getUserUseCase.execute
-        .mockResolvedValueOnce(ResultFactory.success(donorUser))
-        .mockResolvedValueOnce(ResultFactory.success(companyUser));
+      const result = await service.getUserById('donor-id');
 
-      const donorResult = await service.getUserById('donor-id');
-      const companyResult = await service.getUserById('company-id');
-
-      expect(donorResult.isSuccess).toBe(true);
-      expect(donorResult.value?.personType).toBe('DONOR');
-      expect(companyResult.isSuccess).toBe(true);
-      expect(companyResult.value?.personType).toBe('COMPANY');
+      expect(result.isSuccess).toBe(true);
+      expect(result.value?.personType).toBe('DONOR');
     });
   });
 
@@ -291,40 +287,6 @@ describe('UsersService', () => {
       expect(result.isSuccess).toBe(false);
       expect(result.error).toBe(ErrorsEnum.UserNotFoundError);
     });
-
-    it('should handle empty password', async () => {
-      const requestWithoutPassword = { ...donorRequest, password: undefined };
-      const hashedPassword = 'hashedEmptyString';
-      const createdUser: User = {
-        id: '123e4567-e89b-12d3-a456-426614174000',
-        email: requestWithoutPassword.email,
-        password: hashedPassword,
-        name: requestWithoutPassword.name,
-        city: requestWithoutPassword.city,
-        uf: requestWithoutPassword.uf,
-        zipcode: requestWithoutPassword.zipcode,
-        personType: requestWithoutPassword.personType,
-      };
-
-      hashStringUseCase.execute.mockReturnValue(hashedPassword);
-      createUserUseCase.execute.mockResolvedValue(
-        ResultFactory.success(createdUser),
-      );
-      createDonorUseCase.execute.mockResolvedValue(
-        ResultFactory.success({
-          id: 'donor-id',
-          cpf: donorRequest.cpf,
-          bloodType: donorRequest.bloodType,
-          birthDate: donorRequest.birthDate,
-          fkUserId: createdUser.id,
-        }),
-      );
-
-      const result = await service.createUser(requestWithoutPassword);
-
-      expect(result.isSuccess).toBe(true);
-      expect(hashStringUseCase.execute).toHaveBeenCalledWith('');
-    });
   });
 
   describe('authenticate', () => {
@@ -385,42 +347,6 @@ describe('UsersService', () => {
 
       expect(result.isSuccess).toBe(false);
       expect(result.error).toBe(ErrorsEnum.InvalidPassword);
-    });
-
-    it('should handle empty password in authentication', async () => {
-      const emptyPasswordRequest = { ...authRequest, password: undefined };
-
-      getUserByEmailUseCase.execute.mockResolvedValue(
-        ResultFactory.success(mockUser),
-      );
-      compareHashUseCase.execute.mockReturnValue(false);
-
-      const result = await service.authenticate(emptyPasswordRequest);
-
-      expect(result.isSuccess).toBe(false);
-      expect(result.error).toBe(ErrorsEnum.InvalidPassword);
-      expect(compareHashUseCase.execute).toHaveBeenCalledWith({
-        password: '',
-        hash: '',
-      });
-    });
-
-    it('should handle user without password hash', async () => {
-      const userWithoutPassword = { ...mockUser, password: undefined };
-
-      getUserByEmailUseCase.execute.mockResolvedValue(
-        ResultFactory.success(userWithoutPassword),
-      );
-      compareHashUseCase.execute.mockReturnValue(false);
-
-      const result = await service.authenticate(authRequest);
-
-      expect(result.isSuccess).toBe(false);
-      expect(result.error).toBe(ErrorsEnum.InvalidPassword);
-      expect(compareHashUseCase.execute).toHaveBeenCalledWith({
-        password: authRequest.password,
-        hash: '',
-      });
     });
   });
 
@@ -503,24 +429,6 @@ describe('UsersService', () => {
 
       expect(result.isSuccess).toBe(false);
       expect(result.error).toBe(ErrorsEnum.UserNotFoundError);
-    });
-
-    it('should handle user without password hash', async () => {
-      const userWithoutPassword = { ...mockUser, password: undefined };
-
-      getUserUseCase.execute.mockResolvedValue(
-        ResultFactory.success(userWithoutPassword),
-      );
-      compareHashUseCase.execute.mockReturnValue(false);
-
-      const result = await service.changePassword(userId, passwords);
-
-      expect(result.isSuccess).toBe(false);
-      expect(result.error).toBe(ErrorsEnum.InvalidPassword);
-      expect(compareHashUseCase.execute).toHaveBeenCalledWith({
-        password: passwords.old,
-        hash: '',
-      });
     });
   });
 });

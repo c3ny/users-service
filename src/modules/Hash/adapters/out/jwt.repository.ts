@@ -4,7 +4,7 @@ import {
   JwtRepositoryPort,
   JwtToken,
 } from '../../application/ports/out/jwt-repository.port';
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 import config from './config/auth';
 
 @Injectable()

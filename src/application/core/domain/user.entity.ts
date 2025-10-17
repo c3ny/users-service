@@ -7,4 +7,5 @@ export class User {
   uf: string;
   zipcode?: string;
   personType: string;
+  avatarPath?: string;
 }
