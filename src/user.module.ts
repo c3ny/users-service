@@ -22,6 +22,8 @@ import { Companies } from './adapters/out/domain/company.entity';
 import { CompanyRepository } from './adapters/out/company.repository';
 import { CreateCompanyUseCase } from './application/ports/in/company/createCompany.useCase';
 import { UpdateUserAvatarUseCase } from './application/ports/in/user/updateUserAvatar.useCase';
+import { HealthModule } from './modules/Health/health.module';
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -35,6 +37,7 @@ import { UpdateUserAvatarUseCase } from './application/ports/in/user/updateUserA
     }),
     TypeOrmModule.forFeature([Users, Donors, Companies]),
     HashModule,
+    HealthModule,
   ],
   controllers: [UsersController],
   providers: [
