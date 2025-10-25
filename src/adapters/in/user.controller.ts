@@ -47,6 +47,28 @@ import {
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Get('/health')
+  @ApiOperation({ summary: 'Health check endpoint' })
+  @ApiResponse({
+    status: 200,
+    description: 'Service is running',
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'string', example: 'ok' },
+        timestamp: { type: 'string', example: '2024-01-17T10:30:00.000Z' },
+        service: { type: 'string', example: 'users-service' },
+      },
+    },
+  })
+  getHealth() {
+    return {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      service: 'users-service',
+    };
+  }
+
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
