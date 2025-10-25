@@ -1,4 +1,4 @@
-import { UseCase } from 'src/application/types/useCase.types';
+import { UseCase } from '@/application/types/useCase.types';
 import { HashRepositoryPort } from '../out/hash-repository.port';
 import { Inject, Injectable } from '@nestjs/common';
 import { HASH_REPOSITORY } from '@/modules/Hash/constants';

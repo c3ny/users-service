@@ -1,4 +1,4 @@
-import { Donor } from 'src/application/core/domain/donor.entity';
+import { Donor } from '@/application/core/domain/donor.entity';
 
 export type DonorPersistence = Omit<Donor, 'id' | 'fkUserId'> & {
   user: { id: string };

@@ -1,4 +1,4 @@
-import { Company } from 'src/application/core/domain/company.entity';
+import { Company } from '@/application/core/domain/company.entity';
 import { Companies } from '../domain/company.entity';
 
 export type CompanyPersistence = Omit<Company, 'id' | 'fkUserId'> & {

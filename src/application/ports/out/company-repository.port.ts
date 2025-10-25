@@ -1,4 +1,4 @@
-import { Company } from 'src/application/core/domain/company.entity';
+import { Company } from '@/application/core/domain/company.entity';
 
 export interface CompanyRepositoryPort {
   save(company: Omit<Company, 'id'>): Promise<Company>;

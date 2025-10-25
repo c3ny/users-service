@@ -1,8 +1,8 @@
-import { CompanyRepositoryPort } from 'src/application/ports/out/company-repository.port';
+import { CompanyRepositoryPort } from '@/application/ports/out/company-repository.port';
 import { Repository } from 'typeorm';
 import { Companies } from './domain/company.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Company } from 'src/application/core/domain/company.entity';
+import { Company } from '@/application/core/domain/company.entity';
 import { CompanyMapper } from './mappers/company.mapper';
 
 export class CompanyRepository implements CompanyRepositoryPort {

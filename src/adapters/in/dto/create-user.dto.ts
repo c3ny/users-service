@@ -7,7 +7,7 @@ import {
   IsDateString,
   Matches,
 } from 'class-validator';
-import { PersonType } from 'src/application/types/user.types';
+import { PersonType } from '@/application/types/user.types';
 
 export class BaseCreateUserDto {
   @ApiProperty({

@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
-import { UseCase } from 'src/application/types/useCase.types';
+import { UseCase } from '@/application/types/useCase.types';
 import { JwtRepositoryPort, JwtToken } from '../out/jwt-repository.port';
-import { JWT_REPOSITORY } from 'src/modules/Hash/constants';
+import { JWT_REPOSITORY } from '@/modules/Hash/constants';
 
 export class VerifyJwtUseCase implements UseCase<string, JwtToken> {
   constructor(

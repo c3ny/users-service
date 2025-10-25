@@ -1,5 +1,5 @@
-import { Users } from 'src/adapters/out/domain/user.entity';
-import { User } from 'src/application/core/domain/user.entity';
+import { Users } from '@/adapters/out/domain/user.entity';
+import { User } from '@/application/core/domain/user.entity';
 
 export interface UserRepositoryPort {
   save(user: Omit<User, 'id'>): Promise<Omit<User, 'password'>>;

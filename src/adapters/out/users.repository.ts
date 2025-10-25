@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/application/core/domain/user.entity';
-import { UserRepositoryPort } from 'src/application/ports/out/users-repository.port';
+import { User } from '@/application/core/domain/user.entity';
+import { UserRepositoryPort } from '@/application/ports/out/users-repository.port';
 import { Users } from './domain/user.entity';
 import { Repository } from 'typeorm';
 import { UserMapper } from './mappers/user.mapper';

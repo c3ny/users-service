@@ -1,4 +1,4 @@
-import { Donor } from 'src/application/core/domain/donor.entity';
+import { Donor } from '@/application/core/domain/donor.entity';
 
 export interface DonorRepositoryPort {
   save(donor: Omit<Donor, 'id'>): Promise<Donor>;

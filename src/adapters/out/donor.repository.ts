@@ -1,9 +1,9 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { DonorRepositoryPort } from 'src/application/ports/out/donor-repository.port';
+import { DonorRepositoryPort } from '@/application/ports/out/donor-repository.port';
 import { Donors } from './domain/donor.entity';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Donor } from 'src/application/core/domain/donor.entity';
+import { Donor } from '@/application/core/domain/donor.entity';
 import { DonorMapper } from './mappers/donor.mapper';
 
 @Injectable()

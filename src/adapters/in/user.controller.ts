@@ -23,13 +23,12 @@ import {
   ApiResponse,
   ApiBody,
   ApiBearerAuth,
-  ApiConsumes,
   ApiParam,
 } from '@nestjs/swagger';
-import { User } from 'src/application/core/domain/user.entity';
-import { ErrorsEnum } from 'src/application/core/errors/errors.enum';
-import { UsersService } from 'src/application/core/service/users.service';
-import { CreateUserRequest } from 'src/application/types/user.types';
+import { User } from '@/application/core/domain/user.entity';
+import { ErrorsEnum } from '@/application/core/errors/errors.enum';
+import { UsersService } from '@/application/core/service/users.service';
+import { CreateUserRequest } from '@/application/types/user.types';
 import { JwtAuthGuard, JwtPayload } from './guards/jwt-auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
 import {
