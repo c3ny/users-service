@@ -1,0 +1,561 @@
+---
+globs: *.ts,*.tsx
+---
+
+# Users Service - TypeScript Coding Standards
+
+## TypeScript Best Practices
+
+### Type Safety
+
+1. **Always use explicit types** for function parameters and return values
+2. **Avoid `any` type** - use `unknown` if type is truly unknown
+3. **Use strict null checks** - explicitly handle `null` and `undefined`
+4. **Prefer interfaces** for public contracts (ports)
+5. **Use type aliases** for union types and complex types
+
+### Async/Await
+
+1. **Always use async/await** over raw Promises
+2. **Handle errors** appropriately in async functions
+3. **Return Promise types** explicitly in interface definitions
+
+Example:
+
+```typescript
+async execute(params: T): Promise<Result<R>> {
+  // Implementation
+}
+```
+
+## NestJS Conventions
+
+### Decorators
+
+1. **Use dependency injection** via constructor
+2. **Apply decorators** in this order:
+   - Class decorators (@Injectable, @Controller)
+   - Method decorators (@Post, @Get, @Put, @Delete)
+   - Parameter decorators (@Body, @Param, @Query)
+
+### Injectable Services
+
+All services, use cases, and repositories must be decorated with `@Injectable()`:
+
+```typescript
+@Injectable()
+export class CreateUserUseCase implements UseCase<...> {
+  constructor(
+    @Inject(USERS_REPOSITORY)
+    private readonly repository: UserRepositoryPort,
+  ) {}
+}
+```
+
+### Dependency Injection Tokens
+
+1. Define constants in [constants/index.ts](mdc:src/constants/index.ts)
+2. Use `@Inject()` decorator for interface injection
+3. Format: `{ENTITY}_{RESOURCE_TYPE}` (e.g., `USERS_REPOSITORY`, `DONOR_REPOSITORY`)
+
+## Layer-Specific Guidelines
+
+### Domain Entities (`application/core/domain/`)
+
+**DO:**
+
+- Use plain TypeScript classes or interfaces
+- Define enums for fixed value sets
+- Keep entities focused and cohesive
+- Use clear, descriptive property names
+
+**DON'T:**
+
+- Import framework dependencies
+- Add persistence logic
+- Include validation decorators
+- Reference adapters
+
+Example:
+
+```typescript
+export enum PersonType {
+  DONOR = 'DONOR',
+  COMPANY = 'COMPANY',
+}
+
+export class User {
+  id: string;
+  email: string;
+  password?: string;
+  name: string;
+  city: string;
+  uf: string;
+  zipcode?: string;
+  personType: string;
+  avatarPath?: string;
+}
+
+export class Donor {
+  id: string;
+  cpf: string;
+  bloodType: string;
+  birthDate: string;
+  fkUserId: string;
+}
+```
+
+### Use Cases (`application/ports/in/`)
+
+**DO:**
+
+- Implement `UseCase<T, R>` interface
+- Return `Result<T>` for consistent error handling
+- Focus on single responsibility
+- Inject only port interfaces (from `ports/out/`)
+- Use descriptive names: `{Action}{Entity}UseCase`
+
+**DON'T:**
+
+- Call other use cases directly
+- Import from adapters layer
+- Include HTTP or framework logic
+- Mutate input parameters
+
+Example:
+
+```typescript
+@Injectable()
+export class CreateUserUseCase
+  implements UseCase<CreateUserRequest, Promise<Result<User>>>
+{
+  constructor(
+    @Inject(USERS_REPOSITORY)
+    private readonly usersRepository: UserRepositoryPort,
+  ) {}
+
+  async execute(request: CreateUserRequest): Promise<Result<User>> {
+    const existingUser = await this.usersRepository.findByEmail(request.email);
+
+    if (existingUser) {
+      return ResultFactory.failure(ErrorsEnum.UserAlreadyExists);
+    }
+
+    const savedUser = await this.usersRepository.save(request);
+    return ResultFactory.success(savedUser);
+  }
+}
+```
+
+### Services (`application/core/service/`)
+
+**DO:**
+
+- Act as a facade for use cases
+- Inject use cases via constructor
+- Delegate all logic to use cases
+- Return use case results directly
+
+**DON'T:**
+
+- Implement business logic
+- Access repositories directly
+- Transform data (do it in use cases or controllers)
+
+Example:
+
+```typescript
+@Injectable()
+export class UsersService {
+  constructor(
+    private readonly createUserUseCase: CreateUserUseCase,
+    private readonly changePasswordUseCase: ChangePasswordUseCase,
+    private readonly updateUserAvatarUseCase: UpdateUserAvatarUseCase,
+  ) {}
+
+  async createUser(user: CreateUserRequest): Promise<Result<User>> {
+    return this.createUserUseCase.execute(user);
+  }
+
+  async uploadAvatar(
+    userId: string,
+    avatarPath: string,
+  ): Promise<Result<User>> {
+    return this.updateUserAvatarUseCase.execute({ userId, avatarPath });
+  }
+}
+```
+
+### Controllers (`adapters/in/`)
+
+**DO:**
+
+- Use REST conventions for HTTP methods
+- Use plural resource names (`/users`)
+- Extract and validate request data
+- Return service/use case results
+- Handle HTTP-specific concerns (status codes, headers)
+
+**Error handling:**
+
+```typescript
+const result = await this.usersService.createUser(user);
+
+if (!result.isSuccess) {
+  switch (result.error) {
+    case ErrorsEnum.UserAlreadyExists:
+      throw new HttpException(result.error, HttpStatus.BAD_REQUEST);
+    case ErrorsEnum.UserNotFound:
+      throw new HttpException(result.error, HttpStatus.NOT_FOUND);
+    default:
+      throw new HttpException(result.error, HttpStatus.BAD_REQUEST);
+  }
+}
+```
+
+**DON'T:**
+
+- Implement business logic
+- Access repositories directly
+- Handle business errors (let Result pattern handle it)
+
+Example:
+
+```typescript
+@Controller('/users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @Post()
+  async createUser(@Body() user: CreateUserRequest) {
+    return this.usersService.createUser(user);
+  }
+
+  @Put(':id/change-password')
+  async changePassword(
+    @Param('id') id: string,
+    @Body() passwords: { old: string; new: string },
+  ) {
+    return this.usersService.changePassword(id, passwords);
+  }
+
+  @Post(':id/avatar')
+  @UseInterceptors(FileInterceptor('avatar', uploadConfig))
+  async uploadAvatar(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.usersService.uploadAvatar(id, file.path);
+  }
+}
+```
+
+### Repository Ports (`application/ports/out/`)
+
+**DO:**
+
+- Define interfaces only
+- Use domain entities in method signatures
+- Use descriptive method names
+- Return domain entities or null
+
+**DON'T:**
+
+- Include implementations
+- Use framework types (Model, Document, TypeORM entities)
+- Include framework decorators
+
+Example:
+
+```typescript
+export interface UserRepositoryPort {
+  save(user: Omit<User, 'id'>): Promise<Omit<User, 'password'>>;
+  findById(id: string): Promise<User | null>;
+  findByEmail(email: string): Promise<User | null>;
+  updatePassword(id: string, password: string): Promise<User | null>;
+  updateAvatar(id: string, avatarPath: string): Promise<User | null>;
+  update(id: string, user: Omit<User, 'id' | 'password'>): Promise<User | null>;
+}
+```
+
+### Repository Implementations (`adapters/out/`)
+
+**DO:**
+
+- Implement repository port interface
+- Use `@Injectable()` decorator
+- Handle framework-specific logic (TypeORM, etc.)
+- Map between domain entities and persistence models
+- Handle persistence errors appropriately
+
+**DON'T:**
+
+- Include business logic
+- Throw domain errors
+- Reference other repositories (use composition via ports)
+
+Example:
+
+```typescript
+@Injectable()
+export class UsersRepository implements UserRepositoryPort {
+  constructor(
+    @InjectRepository(Users)
+    private readonly usersRepository: Repository<Users>,
+  ) {}
+
+  async save(user: Omit<User, 'id'>): Promise<Omit<User, 'password'>> {
+    const userToSave = UserMapper.toPersistence(user);
+    const savedUser = await this.usersRepository.save(userToSave);
+    return savedUser;
+  }
+
+  async findById(id: string): Promise<User | null> {
+    const user = await this.usersRepository.findOneBy({ id });
+
+    if (!user) {
+      return null;
+    }
+
+    return UserMapper.toDomain(user);
+  }
+
+  async updateAvatar(id: string, avatarPath: string): Promise<User | null> {
+    const user = await this.usersRepository.findOneBy({ id });
+
+    if (!user) {
+      return null;
+    }
+
+    user.avatarPath = avatarPath;
+    const savedUser = await this.usersRepository.save(user);
+
+    return UserMapper.toDomain(savedUser);
+  }
+}
+```
+
+## Result Pattern Usage
+
+### When to Use
+
+1. **Use Result<T>** for all use case returns
+2. **Return success** for successful operations
+3. **Return failure** for business rule violations
+4. **Let exceptions bubble** for technical errors
+
+### Result Factory Methods
+
+```typescript
+// Success
+return ResultFactory.success(user);
+
+// Failure (business error)
+return ResultFactory.failure(ErrorsEnum.UserNotFound);
+
+// Partial success (optional)
+return ResultFactory.partialSuccess(user);
+```
+
+### Checking Results
+
+```typescript
+const result = await useCase.execute(params);
+
+if (result.isSuccess) {
+  const data = result.value;
+  // Handle success
+} else {
+  const error = result.error;
+  // Handle business error
+}
+```
+
+## Error Handling
+
+### Business Errors
+
+1. Define in [errors.enum.ts](mdc:src/application/core/errors/errors.enum.ts)
+2. Use descriptive names: `{ENTITY}_{ERROR_TYPE}`
+3. Return via `ResultFactory.failure()`
+
+Example error definitions:
+
+```typescript
+export enum ErrorsEnum {
+  UserNotFound = 'USER_NOT_FOUND',
+  UserAlreadyExists = 'USER_ALREADY_EXISTS',
+  InvalidPassword = 'INVALID_PASSWORD',
+  DonorNotFound = 'DONOR_NOT_FOUND',
+  CompanyNotFound = 'COMPANY_NOT_FOUND',
+}
+```
+
+### Technical Errors
+
+1. Let NestJS exception filters handle them
+2. Don't catch unless you can recover
+3. Log appropriately
+
+## Import Organization
+
+Order imports by:
+
+1. External libraries (Node, npm packages)
+2. NestJS modules
+3. Application core (domain, services)
+4. Application ports
+5. Adapters
+6. Types and constants
+7. Relative imports
+
+Example:
+
+```typescript
+import { Injectable, Inject } from '@nestjs/common';
+import { UserRepositoryPort } from 'src/application/ports/out/users-repository.port';
+import { User } from 'src/application/core/domain/user.entity';
+import { USERS_REPOSITORY } from 'src/constants';
+import { UseCase } from 'src/types/useCase.types';
+import { Result, ResultFactory } from 'src/types/result.types';
+```
+
+## File Organization
+
+### Naming
+
+- Use kebab-case for file names: `users.service.ts`
+- Match class name to file name: `UsersService` → `users.service.ts`
+- Use descriptive suffixes: `.entity`, `.service`, `.controller`, `.repository`, `.port`, `.mapper`
+
+### Structure
+
+- One main class/interface per file
+- Group related types in the same file
+- Export main construct as default or named export
+
+## Constructor Injection
+
+**DO:**
+
+```typescript
+constructor(
+  private readonly service: UsersService,
+  @Inject(TOKEN) private readonly repository: RepositoryPort,
+) {}
+```
+
+**DON'T:**
+
+```typescript
+// Don't use public unless needed
+constructor(public service: UsersService) {}
+
+// Don't omit readonly
+constructor(private service: UsersService) {}
+```
+
+## Readonly Properties
+
+- Use `readonly` for injected dependencies
+- Use `readonly` for properties that shouldn't change
+- Helps catch mutation bugs at compile time
+
+## Optional vs Required
+
+- Use `?` for truly optional properties
+- Use `| null` when absence has semantic meaning
+- Use `Partial<T>` for update operations
+- Use `Omit<T, 'field'>` for creation operations
+
+Example:
+
+```typescript
+// Optional: may or may not exist
+zipcode?: string;
+avatarPath?: string;
+
+// Required but nullable: always present, value may be null
+middleName: string | null;
+
+// Creation: ID not yet assigned
+save(user: Omit<User, 'id'>): Promise<User>;
+```
+
+## Code Comments
+
+### When to Comment
+
+1. Complex business logic
+2. Non-obvious implementations
+3. Workarounds or hacks (with explanation)
+4. Public API documentation (JSDoc)
+
+### When NOT to Comment
+
+1. Self-explanatory code
+2. Restating code in English
+3. Commented-out code (delete it)
+
+## Testing Patterns
+
+### Unit Tests
+
+- Test use cases in isolation
+- Mock dependencies (repository ports)
+- Test success and failure paths
+- Test edge cases
+
+Example:
+
+```typescript
+describe('CreateUserUseCase', () => {
+  let useCase: CreateUserUseCase;
+  let mockRepository: UserRepositoryPort;
+
+  beforeEach(() => {
+    mockRepository = {
+      save: jest.fn(),
+      findByEmail: jest.fn(),
+    } as any;
+
+    useCase = new CreateUserUseCase(mockRepository);
+  });
+
+  it('should create a user successfully', async () => {
+    const userData = { email: 'test@test.com', name: 'Test User' };
+    jest.spyOn(mockRepository, 'findByEmail').mockResolvedValue(null);
+    jest.spyOn(mockRepository, 'save').mockResolvedValue(userData);
+
+    const result = await useCase.execute(userData);
+
+    expect(result.isSuccess).toBe(true);
+    expect(result.value).toEqual(userData);
+  });
+});
+```
+
+### Integration Tests
+
+- Test adapters with real dependencies
+- Use test database
+- Clean up after tests
+
+### E2E Tests
+
+- Test complete flows
+- Use real HTTP requests
+- Test realistic scenarios
+
+## Common Pitfalls to Avoid
+
+1. ❌ Importing concrete implementations instead of interfaces
+2. ❌ Putting business logic in controllers
+3. ❌ Directly accessing database models in use cases
+4. ❌ Circular dependencies between layers
+5. ❌ Forgetting `@Injectable()` decorator
+6. ❌ Not using the Result pattern
+7. ❌ Mixing domain entities with persistence entities
+8. ❌ Using `any` type
+9. ❌ Not handling null/undefined cases
+10. ❌ Breaking hexagonal architecture boundaries

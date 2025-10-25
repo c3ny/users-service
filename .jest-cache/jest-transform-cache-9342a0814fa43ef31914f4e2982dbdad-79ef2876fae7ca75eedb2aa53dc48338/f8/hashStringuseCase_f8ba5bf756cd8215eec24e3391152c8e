@@ -1,0 +1,60 @@
+b260e717c0d5cb7b8030427b06e91246
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "HashStringUseCase", {
+    enumerable: true,
+    get: function() {
+        return HashStringUseCase;
+    }
+});
+const _common = require("@nestjs/common");
+const _hashrepositoryport = require("../out/hash-repository.port");
+const _constants = require("@/modules/Hash/constants");
+function _define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+function _ts_decorate(decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for(var i = decorators.length - 1; i >= 0; i--)if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+}
+function _ts_metadata(k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+}
+function _ts_param(paramIndex, decorator) {
+    return function(target, key) {
+        decorator(target, key, paramIndex);
+    };
+}
+let HashStringUseCase = class HashStringUseCase {
+    execute(password) {
+        return this.hashRepository.hash(password);
+    }
+    constructor(hashRepository){
+        _define_property(this, "hashRepository", void 0);
+        this.hashRepository = hashRepository;
+    }
+};
+HashStringUseCase = _ts_decorate([
+    (0, _common.Injectable)(),
+    _ts_param(0, (0, _common.Inject)(_constants.HASH_REPOSITORY)),
+    _ts_metadata("design:type", Function),
+    _ts_metadata("design:paramtypes", [
+        typeof _hashrepositoryport.HashRepositoryPort === "undefined" ? Object : _hashrepositoryport.HashRepositoryPort
+    ])
+], HashStringUseCase);
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy95c3JhZWxtb3Jlbm8vRG9jdW1lbnRzL2NvZGVzL2ZhdGVjL3Nhbmd1ZS1zb2xpZGFyaW8vdXNlcnMtc2VydmljZS9zcmMvbW9kdWxlcy9IYXNoL2FwcGxpY2F0aW9uL3BvcnRzL2luL2hhc2hTdHJpbmcudXNlQ2FzZS50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBJbmplY3QsIEluamVjdGFibGUgfSBmcm9tICdAbmVzdGpzL2NvbW1vbic7XG5pbXBvcnQgeyBVc2VDYXNlIH0gZnJvbSAnQC9hcHBsaWNhdGlvbi90eXBlcy91c2VDYXNlLnR5cGVzJztcbmltcG9ydCB7IEhhc2hSZXBvc2l0b3J5UG9ydCB9IGZyb20gJy4uL291dC9oYXNoLXJlcG9zaXRvcnkucG9ydCc7XG5pbXBvcnQgeyBIQVNIX1JFUE9TSVRPUlkgfSBmcm9tICdAL21vZHVsZXMvSGFzaC9jb25zdGFudHMnO1xuXG5ASW5qZWN0YWJsZSgpXG5leHBvcnQgY2xhc3MgSGFzaFN0cmluZ1VzZUNhc2UgaW1wbGVtZW50cyBVc2VDYXNlPHN0cmluZywgc3RyaW5nPiB7XG4gIGNvbnN0cnVjdG9yKFxuICAgIEBJbmplY3QoSEFTSF9SRVBPU0lUT1JZKVxuICAgIHByaXZhdGUgcmVhZG9ubHkgaGFzaFJlcG9zaXRvcnk6IEhhc2hSZXBvc2l0b3J5UG9ydCxcbiAgKSB7fVxuXG4gIGV4ZWN1dGUocGFzc3dvcmQ6IHN0cmluZyk6IHN0cmluZyB7XG4gICAgcmV0dXJuIHRoaXMuaGFzaFJlcG9zaXRvcnkuaGFzaChwYXNzd29yZCk7XG4gIH1cbn1cbiJdLCJuYW1lcyI6WyJIYXNoU3RyaW5nVXNlQ2FzZSIsImV4ZWN1dGUiLCJwYXNzd29yZCIsImhhc2hSZXBvc2l0b3J5IiwiaGFzaCJdLCJtYXBwaW5ncyI6Ijs7OzsrQkFNYUE7OztlQUFBQTs7O3dCQU5zQjtvQ0FFQTsyQkFDSDs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztBQUd6QixJQUFBLEFBQU1BLG9CQUFOLE1BQU1BO0lBTVhDLFFBQVFDLFFBQWdCLEVBQVU7UUFDaEMsT0FBTyxJQUFJLENBQUNDLGNBQWMsQ0FBQ0MsSUFBSSxDQUFDRjtJQUNsQztJQVBBLFlBQ0UsQUFDaUJDLGNBQWtDLENBQ25EOzthQURpQkEsaUJBQUFBO0lBQ2hCO0FBS0wifQ==

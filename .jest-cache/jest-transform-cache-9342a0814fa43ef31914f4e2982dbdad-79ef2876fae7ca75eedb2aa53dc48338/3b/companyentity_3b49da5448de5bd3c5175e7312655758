@@ -1,0 +1,35 @@
+bf1872ec5060cabb9455a78d1bd924e8
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "Company", {
+    enumerable: true,
+    get: function() {
+        return Company;
+    }
+});
+function _define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+let Company = class Company {
+    constructor(){
+        _define_property(this, "id", void 0);
+        _define_property(this, "cnpj", void 0);
+        _define_property(this, "institutionName", void 0);
+        _define_property(this, "cnes", void 0);
+        _define_property(this, "fkUserId", void 0);
+    }
+};
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy95c3JhZWxtb3Jlbm8vRG9jdW1lbnRzL2NvZGVzL2ZhdGVjL3Nhbmd1ZS1zb2xpZGFyaW8vdXNlcnMtc2VydmljZS9zcmMvYXBwbGljYXRpb24vY29yZS9kb21haW4vY29tcGFueS5lbnRpdHkudHMiXSwic291cmNlc0NvbnRlbnQiOlsiZXhwb3J0IGNsYXNzIENvbXBhbnkge1xuICBpZDogc3RyaW5nO1xuICBjbnBqOiBzdHJpbmc7XG4gIGluc3RpdHV0aW9uTmFtZTogc3RyaW5nO1xuICBjbmVzOiBzdHJpbmc7XG4gIGZrVXNlcklkOiBzdHJpbmc7XG59XG4iXSwibmFtZXMiOlsiQ29tcGFueSIsImlkIiwiY25waiIsImluc3RpdHV0aW9uTmFtZSIsImNuZXMiLCJma1VzZXJJZCJdLCJtYXBwaW5ncyI6Ijs7OzsrQkFBYUE7OztlQUFBQTs7Ozs7Ozs7Ozs7Ozs7OztBQUFOLElBQUEsQUFBTUEsVUFBTixNQUFNQTs7UUFDWEMsdUJBQUFBLE1BQUFBLEtBQUFBO1FBQ0FDLHVCQUFBQSxRQUFBQSxLQUFBQTtRQUNBQyx1QkFBQUEsbUJBQUFBLEtBQUFBO1FBQ0FDLHVCQUFBQSxRQUFBQSxLQUFBQTtRQUNBQyx1QkFBQUEsWUFBQUEsS0FBQUE7O0FBQ0YifQ==

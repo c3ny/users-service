@@ -8,15 +8,14 @@ services:
       dockerfile: ./Dockerfile
     command: npm run start:dev
     ports:
-      - 3000:3000
-      - 8080:8080
+      - 3002:3002
     volumes:
       - .:/app
     restart: unless-stopped
     env_file:
       - .env
   postgres_users_service:
-    container_name: postgres
+    container_name: postgres-users-service
     image: postgres:16
     restart: unless-stopped
     env_file:
@@ -28,10 +27,10 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_users_service_data:/var/lib/postgresql/data
 
 volumes:
-  postgres_data:
+  postgres_users_service_data:
 
 configs:
   httpd-config:

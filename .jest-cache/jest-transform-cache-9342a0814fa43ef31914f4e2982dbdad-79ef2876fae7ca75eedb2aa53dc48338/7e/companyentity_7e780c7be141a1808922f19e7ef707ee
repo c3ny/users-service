@@ -1,0 +1,85 @@
+2db7c5ab3238535fdce09bd49e5b1bfa
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "Companies", {
+    enumerable: true,
+    get: function() {
+        return Companies;
+    }
+});
+const _typeorm = require("typeorm");
+const _userentity = require("./user.entity");
+function _define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+function _ts_decorate(decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for(var i = decorators.length - 1; i >= 0; i--)if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+}
+function _ts_metadata(k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+}
+let Companies = class Companies {
+    constructor(){
+        _define_property(this, "id", void 0);
+        _define_property(this, "cnpj", void 0);
+        _define_property(this, "institutionName", void 0);
+        _define_property(this, "cnes", void 0);
+        _define_property(this, "user", void 0);
+    }
+};
+_ts_decorate([
+    (0, _typeorm.PrimaryGeneratedColumn)('uuid'),
+    _ts_metadata("design:type", String)
+], Companies.prototype, "id", void 0);
+_ts_decorate([
+    (0, _typeorm.Column)({
+        type: 'varchar',
+        length: 18,
+        unique: true
+    }),
+    _ts_metadata("design:type", String)
+], Companies.prototype, "cnpj", void 0);
+_ts_decorate([
+    (0, _typeorm.Column)({
+        type: 'varchar',
+        name: 'institution_name',
+        length: 100
+    }),
+    _ts_metadata("design:type", String)
+], Companies.prototype, "institutionName", void 0);
+_ts_decorate([
+    (0, _typeorm.Column)({
+        type: 'varchar',
+        length: 15
+    }),
+    _ts_metadata("design:type", String)
+], Companies.prototype, "cnes", void 0);
+_ts_decorate([
+    (0, _typeorm.OneToOne)(()=>_userentity.Users, {
+        onDelete: 'CASCADE'
+    }),
+    (0, _typeorm.JoinColumn)({
+        name: 'fk_user_id'
+    }),
+    _ts_metadata("design:type", typeof _userentity.Users === "undefined" ? Object : _userentity.Users)
+], Companies.prototype, "user", void 0);
+Companies = _ts_decorate([
+    (0, _typeorm.Entity)('company')
+], Companies);
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy95c3JhZWxtb3Jlbm8vRG9jdW1lbnRzL2NvZGVzL2ZhdGVjL3Nhbmd1ZS1zb2xpZGFyaW8vdXNlcnMtc2VydmljZS9zcmMvYWRhcHRlcnMvb3V0L2RvbWFpbi9jb21wYW55LmVudGl0eS50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQge1xuICBFbnRpdHksXG4gIFByaW1hcnlHZW5lcmF0ZWRDb2x1bW4sXG4gIENvbHVtbixcbiAgT25lVG9PbmUsXG4gIEpvaW5Db2x1bW4sXG59IGZyb20gJ3R5cGVvcm0nO1xuaW1wb3J0IHsgVXNlcnMgfSBmcm9tICcuL3VzZXIuZW50aXR5JztcblxuQEVudGl0eSgnY29tcGFueScpXG5leHBvcnQgY2xhc3MgQ29tcGFuaWVzIHtcbiAgQFByaW1hcnlHZW5lcmF0ZWRDb2x1bW4oJ3V1aWQnKVxuICBpZDogc3RyaW5nO1xuXG4gIEBDb2x1bW4oeyB0eXBlOiAndmFyY2hhcicsIGxlbmd0aDogMTgsIHVuaXF1ZTogdHJ1ZSB9KVxuICBjbnBqOiBzdHJpbmc7XG5cbiAgQENvbHVtbih7IHR5cGU6ICd2YXJjaGFyJywgbmFtZTogJ2luc3RpdHV0aW9uX25hbWUnLCBsZW5ndGg6IDEwMCB9KVxuICBpbnN0aXR1dGlvbk5hbWU6IHN0cmluZztcblxuICBAQ29sdW1uKHsgdHlwZTogJ3ZhcmNoYXInLCBsZW5ndGg6IDE1IH0pXG4gIGNuZXM6IHN0cmluZztcblxuICBAT25lVG9PbmUoKCkgPT4gVXNlcnMsIHsgb25EZWxldGU6ICdDQVNDQURFJyB9KVxuICBASm9pbkNvbHVtbih7IG5hbWU6ICdma191c2VyX2lkJyB9KVxuICB1c2VyOiBVc2Vycztcbn1cbiJdLCJuYW1lcyI6WyJDb21wYW5pZXMiLCJpZCIsImNucGoiLCJpbnN0aXR1dGlvbk5hbWUiLCJjbmVzIiwidXNlciIsInR5cGUiLCJsZW5ndGgiLCJ1bmlxdWUiLCJuYW1lIiwiVXNlcnMiLCJvbkRlbGV0ZSJdLCJtYXBwaW5ncyI6Ijs7OzsrQkFVYUE7OztlQUFBQTs7O3lCQUpOOzRCQUNlOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztBQUdmLElBQUEsQUFBTUEsWUFBTixNQUFNQTs7UUFDWCx1QkFDQUMsTUFEQSxLQUFBO1FBR0EsdUJBQ0FDLFFBREEsS0FBQTtRQUdBLHVCQUNBQyxtQkFEQSxLQUFBO1FBR0EsdUJBQ0FDLFFBREEsS0FBQTtRQUdBLHVCQUVBQyxRQUZBLEtBQUE7O0FBR0Y7Ozs7Ozs7UUFaWUMsTUFBTTtRQUFXQyxRQUFRO1FBQUlDLFFBQVE7Ozs7OztRQUdyQ0YsTUFBTTtRQUFXRyxNQUFNO1FBQW9CRixRQUFROzs7Ozs7UUFHbkRELE1BQU07UUFBV0MsUUFBUTs7Ozs7K0JBR25CRyxpQkFBSztRQUFJQyxVQUFVOzs7UUFDckJGLE1BQU0ifQ==

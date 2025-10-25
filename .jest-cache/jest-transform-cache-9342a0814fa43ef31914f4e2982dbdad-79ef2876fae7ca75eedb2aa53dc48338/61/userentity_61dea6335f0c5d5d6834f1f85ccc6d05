@@ -1,0 +1,87 @@
+b6d5c7bba7ab7e2ca4d595bef0ef67cf
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "Users", {
+    enumerable: true,
+    get: function() {
+        return Users;
+    }
+});
+const _typeorm = require("typeorm");
+function _define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+function _ts_decorate(decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for(var i = decorators.length - 1; i >= 0; i--)if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+}
+function _ts_metadata(k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+}
+let Users = class Users {
+    constructor(){
+        _define_property(this, "id", void 0);
+        _define_property(this, "email", void 0);
+        _define_property(this, "password", void 0);
+        _define_property(this, "name", void 0);
+        _define_property(this, "city", void 0);
+        _define_property(this, "uf", void 0);
+        _define_property(this, "zipcode", void 0);
+        _define_property(this, "personType", void 0);
+    }
+};
+_ts_decorate([
+    (0, _typeorm.PrimaryGeneratedColumn)('uuid'),
+    _ts_metadata("design:type", String)
+], Users.prototype, "id", void 0);
+_ts_decorate([
+    (0, _typeorm.Column)(),
+    _ts_metadata("design:type", String)
+], Users.prototype, "email", void 0);
+_ts_decorate([
+    (0, _typeorm.Column)(),
+    _ts_metadata("design:type", String)
+], Users.prototype, "password", void 0);
+_ts_decorate([
+    (0, _typeorm.Column)(),
+    _ts_metadata("design:type", String)
+], Users.prototype, "name", void 0);
+_ts_decorate([
+    (0, _typeorm.Column)(),
+    _ts_metadata("design:type", String)
+], Users.prototype, "city", void 0);
+_ts_decorate([
+    (0, _typeorm.Column)(),
+    _ts_metadata("design:type", String)
+], Users.prototype, "uf", void 0);
+_ts_decorate([
+    (0, _typeorm.Column)({
+        nullable: true
+    }),
+    _ts_metadata("design:type", String)
+], Users.prototype, "zipcode", void 0);
+_ts_decorate([
+    (0, _typeorm.Column)({
+        name: 'person_type'
+    }),
+    _ts_metadata("design:type", String)
+], Users.prototype, "personType", void 0);
+Users = _ts_decorate([
+    (0, _typeorm.Entity)()
+], Users);
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy95c3JhZWxtb3Jlbm8vRG9jdW1lbnRzL2NvZGVzL2ZhdGVjL3Nhbmd1ZS1zb2xpZGFyaW8vdXNlcnMtc2VydmljZS9zcmMvYWRhcHRlcnMvb3V0L2RvbWFpbi91c2VyLmVudGl0eS50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBFbnRpdHksIENvbHVtbiwgUHJpbWFyeUdlbmVyYXRlZENvbHVtbiB9IGZyb20gJ3R5cGVvcm0nO1xuXG5ARW50aXR5KClcbmV4cG9ydCBjbGFzcyBVc2VycyB7XG4gIEBQcmltYXJ5R2VuZXJhdGVkQ29sdW1uKCd1dWlkJylcbiAgaWQ6IHN0cmluZztcblxuICBAQ29sdW1uKClcbiAgZW1haWw6IHN0cmluZztcblxuICBAQ29sdW1uKClcbiAgcGFzc3dvcmQ/OiBzdHJpbmc7XG5cbiAgQENvbHVtbigpXG4gIG5hbWU6IHN0cmluZztcblxuICBAQ29sdW1uKClcbiAgY2l0eTogc3RyaW5nO1xuXG4gIEBDb2x1bW4oKVxuICB1Zjogc3RyaW5nO1xuXG4gIEBDb2x1bW4oeyBudWxsYWJsZTogdHJ1ZSB9KVxuICB6aXBjb2RlPzogc3RyaW5nO1xuXG4gIEBDb2x1bW4oe1xuICAgIG5hbWU6ICdwZXJzb25fdHlwZScsXG4gIH0pXG4gIHBlcnNvblR5cGU6IHN0cmluZztcbn1cbiJdLCJuYW1lcyI6WyJVc2VycyIsImlkIiwiZW1haWwiLCJwYXNzd29yZCIsIm5hbWUiLCJjaXR5IiwidWYiLCJ6aXBjb2RlIiwicGVyc29uVHlwZSIsIm51bGxhYmxlIl0sIm1hcHBpbmdzIjoiOzs7OytCQUdhQTs7O2VBQUFBOzs7eUJBSDBDOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztBQUdoRCxJQUFBLEFBQU1BLFFBQU4sTUFBTUE7O1FBQ1gsdUJBQ0FDLE1BREEsS0FBQTtRQUdBLHVCQUNBQyxTQURBLEtBQUE7UUFHQSx1QkFDQUMsWUFEQSxLQUFBO1FBR0EsdUJBQ0FDLFFBREEsS0FBQTtRQUdBLHVCQUNBQyxRQURBLEtBQUE7UUFHQSx1QkFDQUMsTUFEQSxLQUFBO1FBR0EsdUJBQ0FDLFdBREEsS0FBQTtRQUdBLHVCQUdBQyxjQUhBLEtBQUE7O0FBSUY7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztRQVBZQyxVQUFVOzs7Ozs7UUFJbEJMLE1BQU0ifQ==

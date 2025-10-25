@@ -1,0 +1,38 @@
+512111d2e5939a55ed442f70d968ee06
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "User", {
+    enumerable: true,
+    get: function() {
+        return User;
+    }
+});
+function _define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+let User = class User {
+    constructor(){
+        _define_property(this, "id", void 0);
+        _define_property(this, "email", void 0);
+        _define_property(this, "password", void 0);
+        _define_property(this, "name", void 0);
+        _define_property(this, "city", void 0);
+        _define_property(this, "uf", void 0);
+        _define_property(this, "zipcode", void 0);
+        _define_property(this, "personType", void 0);
+    }
+};
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy95c3JhZWxtb3Jlbm8vRG9jdW1lbnRzL2NvZGVzL2ZhdGVjL3Nhbmd1ZS1zb2xpZGFyaW8vdXNlcnMtc2VydmljZS9zcmMvYXBwbGljYXRpb24vY29yZS9kb21haW4vdXNlci5lbnRpdHkudHMiXSwic291cmNlc0NvbnRlbnQiOlsiZXhwb3J0IGNsYXNzIFVzZXIge1xuICBpZDogc3RyaW5nO1xuICBlbWFpbDogc3RyaW5nO1xuICBwYXNzd29yZD86IHN0cmluZztcbiAgbmFtZTogc3RyaW5nO1xuICBjaXR5OiBzdHJpbmc7XG4gIHVmOiBzdHJpbmc7XG4gIHppcGNvZGU/OiBzdHJpbmc7XG4gIHBlcnNvblR5cGU6IHN0cmluZztcbn1cbiJdLCJuYW1lcyI6WyJVc2VyIiwiaWQiLCJlbWFpbCIsInBhc3N3b3JkIiwibmFtZSIsImNpdHkiLCJ1ZiIsInppcGNvZGUiLCJwZXJzb25UeXBlIl0sIm1hcHBpbmdzIjoiOzs7OytCQUFhQTs7O2VBQUFBOzs7Ozs7Ozs7Ozs7Ozs7O0FBQU4sSUFBQSxBQUFNQSxPQUFOLE1BQU1BOztRQUNYQyx1QkFBQUEsTUFBQUEsS0FBQUE7UUFDQUMsdUJBQUFBLFNBQUFBLEtBQUFBO1FBQ0FDLHVCQUFBQSxZQUFBQSxLQUFBQTtRQUNBQyx1QkFBQUEsUUFBQUEsS0FBQUE7UUFDQUMsdUJBQUFBLFFBQUFBLEtBQUFBO1FBQ0FDLHVCQUFBQSxNQUFBQSxLQUFBQTtRQUNBQyx1QkFBQUEsV0FBQUEsS0FBQUE7UUFDQUMsdUJBQUFBLGNBQUFBLEtBQUFBOztBQUNGIn0=

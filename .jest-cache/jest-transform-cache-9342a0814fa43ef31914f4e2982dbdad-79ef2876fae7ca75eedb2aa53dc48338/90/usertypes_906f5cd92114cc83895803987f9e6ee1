@@ -1,0 +1,18 @@
+1755da6b38360ac968652eff022a4e13
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "PersonType", {
+    enumerable: true,
+    get: function() {
+        return PersonType;
+    }
+});
+var PersonType = /*#__PURE__*/ function(PersonType) {
+    PersonType["DONOR"] = "DONOR";
+    PersonType["COMPANY"] = "COMPANY";
+    return PersonType;
+}({});
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy95c3JhZWxtb3Jlbm8vRG9jdW1lbnRzL2NvZGVzL2ZhdGVjL3Nhbmd1ZS1zb2xpZGFyaW8vdXNlcnMtc2VydmljZS9zcmMvYXBwbGljYXRpb24vdHlwZXMvdXNlci50eXBlcy50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgZW51bSBQZXJzb25UeXBlIHtcbiAgRE9OT1IgPSAnRE9OT1InLFxuICBDT01QQU5ZID0gJ0NPTVBBTlknLFxufVxuXG5leHBvcnQgaW50ZXJmYWNlIEJhc2VDcmVhdGVVc2VyUmVxdWVzdCB7XG4gIGVtYWlsOiBzdHJpbmc7XG4gIHBhc3N3b3JkPzogc3RyaW5nO1xuICBuYW1lOiBzdHJpbmc7XG4gIGNpdHk6IHN0cmluZztcbiAgdWY6IHN0cmluZztcbiAgemlwY29kZT86IHN0cmluZztcbiAgcGVyc29uVHlwZTogUGVyc29uVHlwZTtcbn1cblxuZXhwb3J0IGludGVyZmFjZSBDcmVhdGVEb25vclJlcXVlc3QgZXh0ZW5kcyBCYXNlQ3JlYXRlVXNlclJlcXVlc3Qge1xuICBwZXJzb25UeXBlOiBQZXJzb25UeXBlLkRPTk9SO1xuICBjcGY6IHN0cmluZztcbiAgYmxvb2RUeXBlOiBzdHJpbmc7XG4gIGJpcnRoRGF0ZTogRGF0ZTtcbn1cblxuZXhwb3J0IGludGVyZmFjZSBDcmVhdGVDb21wYW55UmVxdWVzdCBleHRlbmRzIEJhc2VDcmVhdGVVc2VyUmVxdWVzdCB7XG4gIHBlcnNvblR5cGU6IFBlcnNvblR5cGUuQ09NUEFOWTtcbiAgY25wajogc3RyaW5nO1xuICBpbnN0aXR1dGlvbk5hbWU6IHN0cmluZztcbiAgY25lczogc3RyaW5nO1xufVxuXG5leHBvcnQgdHlwZSBDcmVhdGVVc2VyUmVxdWVzdCA9IENyZWF0ZURvbm9yUmVxdWVzdCB8IENyZWF0ZUNvbXBhbnlSZXF1ZXN0O1xuIl0sIm5hbWVzIjpbIlBlcnNvblR5cGUiXSwibWFwcGluZ3MiOiI7Ozs7K0JBQVlBOzs7ZUFBQUE7OztBQUFMLElBQUEsQUFBS0Esb0NBQUFBOzs7V0FBQUEifQ==

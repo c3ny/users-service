@@ -1,0 +1,66 @@
+252feaae15fbebc78297497e6c406358
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "CreateCompanyUseCase", {
+    enumerable: true,
+    get: function() {
+        return CreateCompanyUseCase;
+    }
+});
+const _companyrepositoryport = require("../../out/company-repository.port");
+const _resulttypes = require("@/application/types/result.types");
+const _common = require("@nestjs/common");
+const _constants = require("@/constants");
+const _errorsenum = require("@/application/core/errors/errors.enum");
+function _define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+function _ts_decorate(decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for(var i = decorators.length - 1; i >= 0; i--)if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+}
+function _ts_metadata(k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+}
+function _ts_param(paramIndex, decorator) {
+    return function(target, key) {
+        decorator(target, key, paramIndex);
+    };
+}
+let CreateCompanyUseCase = class CreateCompanyUseCase {
+    async execute(company) {
+        const savedCompany = await this.companyRepository.save(company);
+        if (!savedCompany) {
+            return _resulttypes.ResultFactory.failure(_errorsenum.ErrorsEnum.CompanyNotFoundError);
+        }
+        return _resulttypes.ResultFactory.success(savedCompany);
+    }
+    constructor(companyRepository){
+        _define_property(this, "companyRepository", void 0);
+        this.companyRepository = companyRepository;
+    }
+};
+CreateCompanyUseCase = _ts_decorate([
+    (0, _common.Injectable)(),
+    _ts_param(0, (0, _common.Inject)(_constants.COMPANY_REPOSITORY)),
+    _ts_metadata("design:type", Function),
+    _ts_metadata("design:paramtypes", [
+        typeof _companyrepositoryport.CompanyRepositoryPort === "undefined" ? Object : _companyrepositoryport.CompanyRepositoryPort
+    ])
+], CreateCompanyUseCase);
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy95c3JhZWxtb3Jlbm8vRG9jdW1lbnRzL2NvZGVzL2ZhdGVjL3Nhbmd1ZS1zb2xpZGFyaW8vdXNlcnMtc2VydmljZS9zcmMvYXBwbGljYXRpb24vcG9ydHMvaW4vY29tcGFueS9jcmVhdGVDb21wYW55LnVzZUNhc2UudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgQ29tcGFueVJlcG9zaXRvcnlQb3J0IH0gZnJvbSAnLi4vLi4vb3V0L2NvbXBhbnktcmVwb3NpdG9yeS5wb3J0JztcbmltcG9ydCB7IFVzZUNhc2UgfSBmcm9tICdAL2FwcGxpY2F0aW9uL3R5cGVzL3VzZUNhc2UudHlwZXMnO1xuaW1wb3J0IHsgQ29tcGFueSB9IGZyb20gJ0AvYXBwbGljYXRpb24vY29yZS9kb21haW4vY29tcGFueS5lbnRpdHknO1xuaW1wb3J0IHsgUmVzdWx0LCBSZXN1bHRGYWN0b3J5IH0gZnJvbSAnQC9hcHBsaWNhdGlvbi90eXBlcy9yZXN1bHQudHlwZXMnO1xuaW1wb3J0IHsgSW5qZWN0LCBJbmplY3RhYmxlIH0gZnJvbSAnQG5lc3Rqcy9jb21tb24nO1xuaW1wb3J0IHsgQ09NUEFOWV9SRVBPU0lUT1JZIH0gZnJvbSAnQC9jb25zdGFudHMnO1xuaW1wb3J0IHsgRXJyb3JzRW51bSB9IGZyb20gJ0AvYXBwbGljYXRpb24vY29yZS9lcnJvcnMvZXJyb3JzLmVudW0nO1xuXG5ASW5qZWN0YWJsZSgpXG5leHBvcnQgY2xhc3MgQ3JlYXRlQ29tcGFueVVzZUNhc2VcbiAgaW1wbGVtZW50cyBVc2VDYXNlPENvbXBhbnksIFByb21pc2U8UmVzdWx0PENvbXBhbnk+Pj5cbntcbiAgY29uc3RydWN0b3IoXG4gICAgQEluamVjdChDT01QQU5ZX1JFUE9TSVRPUlkpXG4gICAgcHJpdmF0ZSByZWFkb25seSBjb21wYW55UmVwb3NpdG9yeTogQ29tcGFueVJlcG9zaXRvcnlQb3J0LFxuICApIHt9XG5cbiAgYXN5bmMgZXhlY3V0ZShjb21wYW55OiBPbWl0PENvbXBhbnksICdpZCc+KTogUHJvbWlzZTxSZXN1bHQ8Q29tcGFueT4+IHtcbiAgICBjb25zdCBzYXZlZENvbXBhbnkgPSBhd2FpdCB0aGlzLmNvbXBhbnlSZXBvc2l0b3J5LnNhdmUoY29tcGFueSk7XG5cbiAgICBpZiAoIXNhdmVkQ29tcGFueSkge1xuICAgICAgcmV0dXJuIFJlc3VsdEZhY3RvcnkuZmFpbHVyZShFcnJvcnNFbnVtLkNvbXBhbnlOb3RGb3VuZEVycm9yKTtcbiAgICB9XG5cbiAgICByZXR1cm4gUmVzdWx0RmFjdG9yeS5zdWNjZXNzKHNhdmVkQ29tcGFueSk7XG4gIH1cbn1cbiJdLCJuYW1lcyI6WyJDcmVhdGVDb21wYW55VXNlQ2FzZSIsImV4ZWN1dGUiLCJjb21wYW55Iiwic2F2ZWRDb21wYW55IiwiY29tcGFueVJlcG9zaXRvcnkiLCJzYXZlIiwiUmVzdWx0RmFjdG9yeSIsImZhaWx1cmUiLCJFcnJvcnNFbnVtIiwiQ29tcGFueU5vdEZvdW5kRXJyb3IiLCJzdWNjZXNzIl0sIm1hcHBpbmdzIjoiOzs7OytCQVNhQTs7O2VBQUFBOzs7dUNBVHlCOzZCQUdBO3dCQUNIOzJCQUNBOzRCQUNSOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBR3BCLElBQUEsQUFBTUEsdUJBQU4sTUFBTUE7SUFRWCxNQUFNQyxRQUFRQyxPQUE0QixFQUE0QjtRQUNwRSxNQUFNQyxlQUFlLE1BQU0sSUFBSSxDQUFDQyxpQkFBaUIsQ0FBQ0MsSUFBSSxDQUFDSDtRQUV2RCxJQUFJLENBQUNDLGNBQWM7WUFDakIsT0FBT0csMEJBQWEsQ0FBQ0MsT0FBTyxDQUFDQyxzQkFBVSxDQUFDQyxvQkFBb0I7UUFDOUQ7UUFFQSxPQUFPSCwwQkFBYSxDQUFDSSxPQUFPLENBQUNQO0lBQy9CO0lBYkEsWUFDRSxBQUNpQkMsaUJBQXdDLENBQ3pEOzthQURpQkEsb0JBQUFBO0lBQ2hCO0FBV0wifQ==

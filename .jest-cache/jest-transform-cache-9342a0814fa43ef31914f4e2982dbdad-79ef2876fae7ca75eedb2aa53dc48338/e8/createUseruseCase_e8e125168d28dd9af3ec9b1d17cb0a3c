@@ -1,0 +1,71 @@
+ea80c7a9b02560e0252427b60a8779b8
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "CreateUserUseCase", {
+    enumerable: true,
+    get: function() {
+        return CreateUserUseCase;
+    }
+});
+const _common = require("@nestjs/common");
+const _usersrepositoryport = require("../../out/users-repository.port");
+const _constants = require("@/constants");
+const _resulttypes = require("@/application/types/result.types");
+const _getUserByEmailuseCase = require("./getUserByEmail.useCase");
+const _errorsenum = require("@/application/core/errors/errors.enum");
+function _define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+function _ts_decorate(decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for(var i = decorators.length - 1; i >= 0; i--)if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+}
+function _ts_metadata(k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+}
+function _ts_param(paramIndex, decorator) {
+    return function(target, key) {
+        decorator(target, key, paramIndex);
+    };
+}
+let CreateUserUseCase = class CreateUserUseCase {
+    async execute(user) {
+        const existingUser = await this.getUserByEmailUseCase.execute(user.email);
+        if (existingUser.isSuccess) {
+            return _resulttypes.ResultFactory.failure(_errorsenum.ErrorsEnum.UserAlreadyExists);
+        }
+        const savedUser = await this.usersRepository.save(user);
+        return _resulttypes.ResultFactory.success(savedUser);
+    }
+    constructor(usersRepository, getUserByEmailUseCase){
+        _define_property(this, "usersRepository", void 0);
+        _define_property(this, "getUserByEmailUseCase", void 0);
+        this.usersRepository = usersRepository;
+        this.getUserByEmailUseCase = getUserByEmailUseCase;
+    }
+};
+CreateUserUseCase = _ts_decorate([
+    (0, _common.Injectable)(),
+    _ts_param(0, (0, _common.Inject)(_constants.USERS_REPOSITORY)),
+    _ts_metadata("design:type", Function),
+    _ts_metadata("design:paramtypes", [
+        typeof _usersrepositoryport.UserRepositoryPort === "undefined" ? Object : _usersrepositoryport.UserRepositoryPort,
+        typeof _getUserByEmailuseCase.GetUserByEmailUseCase === "undefined" ? Object : _getUserByEmailuseCase.GetUserByEmailUseCase
+    ])
+], CreateUserUseCase);
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy95c3JhZWxtb3Jlbm8vRG9jdW1lbnRzL2NvZGVzL2ZhdGVjL3Nhbmd1ZS1zb2xpZGFyaW8vdXNlcnMtc2VydmljZS9zcmMvYXBwbGljYXRpb24vcG9ydHMvaW4vdXNlci9jcmVhdGVVc2VyLnVzZUNhc2UudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgSW5qZWN0LCBJbmplY3RhYmxlIH0gZnJvbSAnQG5lc3Rqcy9jb21tb24nO1xuaW1wb3J0IHsgVXNlciB9IGZyb20gJ0AvYXBwbGljYXRpb24vY29yZS9kb21haW4vdXNlci5lbnRpdHknO1xuaW1wb3J0IHsgVXNlclJlcG9zaXRvcnlQb3J0IH0gZnJvbSAnLi4vLi4vb3V0L3VzZXJzLXJlcG9zaXRvcnkucG9ydCc7XG5pbXBvcnQgeyBVU0VSU19SRVBPU0lUT1JZIH0gZnJvbSAnQC9jb25zdGFudHMnO1xuaW1wb3J0IHsgVXNlQ2FzZSB9IGZyb20gJ0AvYXBwbGljYXRpb24vdHlwZXMvdXNlQ2FzZS50eXBlcyc7XG5pbXBvcnQgeyBSZXN1bHQsIFJlc3VsdEZhY3RvcnkgfSBmcm9tICdAL2FwcGxpY2F0aW9uL3R5cGVzL3Jlc3VsdC50eXBlcyc7XG5pbXBvcnQgeyBHZXRVc2VyQnlFbWFpbFVzZUNhc2UgfSBmcm9tICcuL2dldFVzZXJCeUVtYWlsLnVzZUNhc2UnO1xuaW1wb3J0IHsgRXJyb3JzRW51bSB9IGZyb20gJ0AvYXBwbGljYXRpb24vY29yZS9lcnJvcnMvZXJyb3JzLmVudW0nO1xuXG5ASW5qZWN0YWJsZSgpXG5leHBvcnQgY2xhc3MgQ3JlYXRlVXNlclVzZUNhc2UgaW1wbGVtZW50cyBVc2VDYXNlPFVzZXIsIFByb21pc2U8UmVzdWx0PFVzZXI+Pj4ge1xuICBjb25zdHJ1Y3RvcihcbiAgICBASW5qZWN0KFVTRVJTX1JFUE9TSVRPUlkpXG4gICAgcHJpdmF0ZSByZWFkb25seSB1c2Vyc1JlcG9zaXRvcnk6IFVzZXJSZXBvc2l0b3J5UG9ydCxcbiAgICBwcml2YXRlIHJlYWRvbmx5IGdldFVzZXJCeUVtYWlsVXNlQ2FzZTogR2V0VXNlckJ5RW1haWxVc2VDYXNlLFxuICApIHt9XG5cbiAgYXN5bmMgZXhlY3V0ZSh1c2VyOiBPbWl0PFVzZXIsICdpZCc+KTogUHJvbWlzZTxSZXN1bHQ8VXNlcj4+IHtcbiAgICBjb25zdCBleGlzdGluZ1VzZXIgPSBhd2FpdCB0aGlzLmdldFVzZXJCeUVtYWlsVXNlQ2FzZS5leGVjdXRlKHVzZXIuZW1haWwpO1xuXG4gICAgaWYgKGV4aXN0aW5nVXNlci5pc1N1Y2Nlc3MpIHtcbiAgICAgIHJldHVybiBSZXN1bHRGYWN0b3J5LmZhaWx1cmUoRXJyb3JzRW51bS5Vc2VyQWxyZWFkeUV4aXN0cyk7XG4gICAgfVxuXG4gICAgY29uc3Qgc2F2ZWRVc2VyID0gYXdhaXQgdGhpcy51c2Vyc1JlcG9zaXRvcnkuc2F2ZSh1c2VyKTtcblxuICAgIHJldHVybiBSZXN1bHRGYWN0b3J5LnN1Y2Nlc3Moc2F2ZWRVc2VyKTtcbiAgfVxufVxuIl0sIm5hbWVzIjpbIkNyZWF0ZVVzZXJVc2VDYXNlIiwiZXhlY3V0ZSIsInVzZXIiLCJleGlzdGluZ1VzZXIiLCJnZXRVc2VyQnlFbWFpbFVzZUNhc2UiLCJlbWFpbCIsImlzU3VjY2VzcyIsIlJlc3VsdEZhY3RvcnkiLCJmYWlsdXJlIiwiRXJyb3JzRW51bSIsIlVzZXJBbHJlYWR5RXhpc3RzIiwic2F2ZWRVc2VyIiwidXNlcnNSZXBvc2l0b3J5Iiwic2F2ZSIsInN1Y2Nlc3MiXSwibWFwcGluZ3MiOiI7Ozs7K0JBVWFBOzs7ZUFBQUE7Ozt3QkFWc0I7cUNBRUE7MkJBQ0Y7NkJBRUs7dUNBQ0E7NEJBQ1g7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFHcEIsSUFBQSxBQUFNQSxvQkFBTixNQUFNQTtJQU9YLE1BQU1DLFFBQVFDLElBQXNCLEVBQXlCO1FBQzNELE1BQU1DLGVBQWUsTUFBTSxJQUFJLENBQUNDLHFCQUFxQixDQUFDSCxPQUFPLENBQUNDLEtBQUtHLEtBQUs7UUFFeEUsSUFBSUYsYUFBYUcsU0FBUyxFQUFFO1lBQzFCLE9BQU9DLDBCQUFhLENBQUNDLE9BQU8sQ0FBQ0Msc0JBQVUsQ0FBQ0MsaUJBQWlCO1FBQzNEO1FBRUEsTUFBTUMsWUFBWSxNQUFNLElBQUksQ0FBQ0MsZUFBZSxDQUFDQyxJQUFJLENBQUNYO1FBRWxELE9BQU9LLDBCQUFhLENBQUNPLE9BQU8sQ0FBQ0g7SUFDL0I7SUFoQkEsWUFDRSxBQUNpQkMsZUFBbUMsRUFDcEQsQUFBaUJSLHFCQUE0QyxDQUM3RDs7O2FBRmlCUSxrQkFBQUE7YUFDQVIsd0JBQUFBO0lBQ2hCO0FBYUwifQ==

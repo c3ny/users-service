@@ -1,0 +1,63 @@
+0356b4ed381024e6278ec66091ecb661
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "HashService", {
+    enumerable: true,
+    get: function() {
+        return HashService;
+    }
+});
+const _common = require("@nestjs/common");
+const _compareHashuseCase = require("../../ports/in/compareHash.useCase");
+const _hashStringuseCase = require("../../ports/in/hashString.useCase");
+function _define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+function _ts_decorate(decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for(var i = decorators.length - 1; i >= 0; i--)if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+}
+function _ts_metadata(k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+}
+let HashService = class HashService {
+    hash(password) {
+        return this.hashStringUseCase.execute(password);
+    }
+    compare(compare, passwordWithHash) {
+        return this.compareHashUseCase.execute({
+            password: compare,
+            hash: passwordWithHash
+        });
+    }
+    constructor(hashStringUseCase, compareHashUseCase){
+        _define_property(this, "hashStringUseCase", void 0);
+        _define_property(this, "compareHashUseCase", void 0);
+        this.hashStringUseCase = hashStringUseCase;
+        this.compareHashUseCase = compareHashUseCase;
+    }
+};
+HashService = _ts_decorate([
+    (0, _common.Injectable)(),
+    _ts_metadata("design:type", Function),
+    _ts_metadata("design:paramtypes", [
+        typeof _hashStringuseCase.HashStringUseCase === "undefined" ? Object : _hashStringuseCase.HashStringUseCase,
+        typeof _compareHashuseCase.CompareHashUseCase === "undefined" ? Object : _compareHashuseCase.CompareHashUseCase
+    ])
+], HashService);
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy95c3JhZWxtb3Jlbm8vRG9jdW1lbnRzL2NvZGVzL2ZhdGVjL3Nhbmd1ZS1zb2xpZGFyaW8vdXNlcnMtc2VydmljZS9zcmMvbW9kdWxlcy9IYXNoL2FwcGxpY2F0aW9uL2NvcmUvc2VydmljZS9oYXNoLnNlcnZpY2UudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgSW5qZWN0YWJsZSB9IGZyb20gJ0BuZXN0anMvY29tbW9uJztcbmltcG9ydCB7IENvbXBhcmVIYXNoVXNlQ2FzZSB9IGZyb20gJy4uLy4uL3BvcnRzL2luL2NvbXBhcmVIYXNoLnVzZUNhc2UnO1xuaW1wb3J0IHsgSGFzaFN0cmluZ1VzZUNhc2UgfSBmcm9tICcuLi8uLi9wb3J0cy9pbi9oYXNoU3RyaW5nLnVzZUNhc2UnO1xuXG5ASW5qZWN0YWJsZSgpXG5leHBvcnQgY2xhc3MgSGFzaFNlcnZpY2Uge1xuICBjb25zdHJ1Y3RvcihcbiAgICBwcml2YXRlIHJlYWRvbmx5IGhhc2hTdHJpbmdVc2VDYXNlOiBIYXNoU3RyaW5nVXNlQ2FzZSxcbiAgICBwcml2YXRlIHJlYWRvbmx5IGNvbXBhcmVIYXNoVXNlQ2FzZTogQ29tcGFyZUhhc2hVc2VDYXNlLFxuICApIHt9XG4gIGhhc2gocGFzc3dvcmQ6IHN0cmluZyk6IHN0cmluZyB7XG4gICAgcmV0dXJuIHRoaXMuaGFzaFN0cmluZ1VzZUNhc2UuZXhlY3V0ZShwYXNzd29yZCk7XG4gIH1cblxuICBjb21wYXJlKGNvbXBhcmU6IHN0cmluZywgcGFzc3dvcmRXaXRoSGFzaDogYCR7c3RyaW5nfToke3N0cmluZ31gKTogYm9vbGVhbiB7XG4gICAgcmV0dXJuIHRoaXMuY29tcGFyZUhhc2hVc2VDYXNlLmV4ZWN1dGUoe1xuICAgICAgcGFzc3dvcmQ6IGNvbXBhcmUsXG4gICAgICBoYXNoOiBwYXNzd29yZFdpdGhIYXNoLFxuICAgIH0pO1xuICB9XG59XG4iXSwibmFtZXMiOlsiSGFzaFNlcnZpY2UiLCJoYXNoIiwicGFzc3dvcmQiLCJoYXNoU3RyaW5nVXNlQ2FzZSIsImV4ZWN1dGUiLCJjb21wYXJlIiwicGFzc3dvcmRXaXRoSGFzaCIsImNvbXBhcmVIYXNoVXNlQ2FzZSJdLCJtYXBwaW5ncyI6Ijs7OzsrQkFLYUE7OztlQUFBQTs7O3dCQUxjO29DQUNRO21DQUNEOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztBQUczQixJQUFBLEFBQU1BLGNBQU4sTUFBTUE7SUFLWEMsS0FBS0MsUUFBZ0IsRUFBVTtRQUM3QixPQUFPLElBQUksQ0FBQ0MsaUJBQWlCLENBQUNDLE9BQU8sQ0FBQ0Y7SUFDeEM7SUFFQUcsUUFBUUEsT0FBZSxFQUFFQyxnQkFBdUMsRUFBVztRQUN6RSxPQUFPLElBQUksQ0FBQ0Msa0JBQWtCLENBQUNILE9BQU8sQ0FBQztZQUNyQ0YsVUFBVUc7WUFDVkosTUFBTUs7UUFDUjtJQUNGO0lBYkEsWUFDRSxBQUFpQkgsaUJBQW9DLEVBQ3JELEFBQWlCSSxrQkFBc0MsQ0FDdkQ7OzthQUZpQkosb0JBQUFBO2FBQ0FJLHFCQUFBQTtJQUNoQjtBQVdMIn0=
