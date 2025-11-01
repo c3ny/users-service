@@ -41,6 +41,7 @@ import {
   AuthResponseDto,
   ErrorResponseDto,
 } from './dto/user-response.dto';
+import { AuthenticateUserDto } from './dto/authenticate-user.dto';
 
 @ApiTags('Users')
 @Controller('/users')
@@ -300,7 +301,7 @@ export class UsersController {
     type: ErrorResponseDto,
   })
   async authenticate(
-    @Body() user: Pick<User, 'email' | 'password'>,
+    @Body() user: AuthenticateUserDto,
   ): Promise<{ user: User; token: string }> {
     const result = await this.usersService.authenticate(user);
 

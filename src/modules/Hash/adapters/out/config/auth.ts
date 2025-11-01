@@ -1,6 +1,6 @@
 type AuthConfig = {
   secret: string;
-  expiresIn: `${number}h`;
+  expiresIn: `${number}h` | `${number}d`;
 };
 
 export default {

@@ -13,6 +13,7 @@ import { CreateUserRequest, PersonType } from '@/application/types/user.types';
 import { CreateCompanyUseCase } from '@/application/ports/in/company/createCompany.useCase';
 import { GenerateJwtUseCase } from '@/modules/Hash/application/ports/in/generateJwt.useCase';
 import { UpdateUserAvatarUseCase } from '@/application/ports/in/user/updateUserAvatar.useCase';
+import { AuthenticateUserDto } from '@/adapters/in/dto/authenticate-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -87,11 +88,13 @@ export class UsersService {
       }
     }
 
+    delete result.value.password;
+
     return ResultFactory.success(result.value);
   }
 
   async authenticate(
-    user: Pick<User, 'email' | 'password'>,
+    user: AuthenticateUserDto,
   ): Promise<Result<{ user: User; token: string }>> {
     const findByEmail = await this.getUserByEmailUseCase.execute(user.email);
 
@@ -110,11 +113,14 @@ export class UsersService {
 
     delete findByEmail.value.password;
 
-    const token = this.generateJwtUseCase.execute({
-      email: findByEmail.value.email,
-      id: findByEmail.value.id,
-      personType: findByEmail.value.personType,
-    });
+    const token = this.generateJwtUseCase.execute(
+      {
+        email: findByEmail.value.email,
+        id: findByEmail.value.id,
+        personType: findByEmail.value.personType,
+      },
+      user.rememberMe ? '30d' : '1h',
+    );
 
     return ResultFactory.success({
       user: findByEmail.value,

@@ -9,14 +9,17 @@ import config from './config/auth';
 
 @Injectable()
 export class JwtRepository implements JwtRepositoryPort {
-  generate(payload: JwtPayload): string {
+  generate(
+    payload: JwtPayload,
+    expiresIn?: `${number}h` | `${number}d`,
+  ): string {
     if (typeof payload !== 'string' && typeof payload !== 'object') {
       throw new Error('Payload must be a string or an object');
     }
 
     const token = jwt.sign(payload, config.secret, {
       algorithm: 'HS256',
-      expiresIn: config.expiresIn,
+      expiresIn: expiresIn ?? config.expiresIn,
     });
 
     if (!token) {

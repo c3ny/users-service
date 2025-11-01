@@ -8,18 +8,15 @@ import 'dotenv/config';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // Enable CORS for frontend integration
   app.enableCors({
     origin: ['http://localhost:3000', 'http://localhost:3001'],
     credentials: true,
   });
 
-  // Serve static files for avatar uploads
   app.useStaticAssets(join(__dirname, '..', '..', 'temp', 'uploads'), {
     prefix: '/uploads/',
   });
 
-  // Setup Swagger documentation
   setupSwagger(app);
 
   await app.listen(process.env.PORT ?? 3002);

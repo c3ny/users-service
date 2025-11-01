@@ -10,7 +10,10 @@ export class GenerateJwtUseCase implements UseCase<JwtPayload, string> {
     private readonly jwtRepository: JwtRepositoryPort,
   ) {}
 
-  execute(payload: JwtPayload): string {
-    return this.jwtRepository.generate(payload);
+  execute(
+    payload: JwtPayload,
+    expiresIn?: `${number}h` | `${number}d`,
+  ): string {
+    return this.jwtRepository.generate(payload, expiresIn);
   }
 }
