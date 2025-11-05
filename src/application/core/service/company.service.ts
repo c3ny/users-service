@@ -3,9 +3,17 @@ import { GetCompanyByUserUseCase } from '../../../application/ports/in/company/g
 
 @Injectable()
 export class CompanyService {
-  constructor(private readonly getCompanyByUserUseCase: GetCompanyByUserUseCase) {}
+  constructor(
+    private readonly getCompanyByUserUseCase: GetCompanyByUserUseCase,
+  ) {}
 
   async getByUserId(userId: string) {
-    return await this.getCompanyByUserUseCase.execute(userId);
+    const result = await this.getCompanyByUserUseCase.execute(userId);
+
+    if (!result.isSuccess) {
+      throw new NotFoundException(result.error);
+    }
+
+    return result.value;
   }
 }

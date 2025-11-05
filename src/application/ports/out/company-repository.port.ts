@@ -5,4 +5,5 @@ export interface CompanyRepositoryPort {
   findById(id: string): Promise<Company | null>;
   update(company: Company): Promise<Company>;
   delete(id: string): Promise<void>;
+  findByUserId(userId: string): Promise<Company | null>;
 }
