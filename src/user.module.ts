@@ -23,7 +23,8 @@ import { CompanyRepository } from './adapters/out/company.repository';
 import { CreateCompanyUseCase } from './application/ports/in/company/createCompany.useCase';
 import { UpdateUserAvatarUseCase } from './application/ports/in/user/updateUserAvatar.useCase';
 import { HealthModule } from './modules/Health/health.module';
-import { CompanyController } from './adapters/in/company.controller';
+import { CompanyService } from './application/core/service/company.service';
+import { GetCompanyByUserUseCase } from './application/ports/in/company/getCompanyByUser.useCase';
 
 
 @Module({
@@ -44,7 +45,7 @@ import { CompanyController } from './adapters/in/company.controller';
     HealthModule,
     
   ],
-  controllers: [UsersController, CompanyController],
+  controllers: [UsersController],
   providers: [
     CreateUserUseCase,
     GetUserUseCase,
@@ -56,6 +57,8 @@ import { CompanyController } from './adapters/in/company.controller';
     CreateCompanyUseCase,
     UpdateUserAvatarUseCase,
     CompanyRepository,
+    CompanyService,
+    GetCompanyByUserUseCase,
     { provide: USERS_REPOSITORY, useClass: UsersRepository },
     { provide: DONOR_REPOSITORY, useClass: DonorRepository },
     { provide: COMPANY_REPOSITORY, useClass: CompanyRepository },
