@@ -42,11 +42,14 @@ import {
   ErrorResponseDto,
 } from './dto/user-response.dto';
 import { AuthenticateUserDto } from './dto/authenticate-user.dto';
+import { CompanyService } from '@/application/core/service/company.service';
 
 @ApiTags('Users')
 @Controller('/users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService,
+    private readonly companyService: CompanyService,
+  ) {}
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
@@ -55,6 +58,12 @@ export class UsersController {
     description:
       'Retrieve user profile information by user ID. Users can only access their own data.',
   })
+  @Get(':id/company')
+  @ApiOperation({ summary: 'Retorna a empresa associada ao usuário' })
+  async getCompanyByUser(@Param('id') id: string) {
+  return await this.companyService.getByUserId(id);
+  }
+
   @ApiParam({
     name: 'id',
     description: 'User UUID',
