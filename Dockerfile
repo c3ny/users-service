@@ -3,7 +3,7 @@ FROM node AS development
 WORKDIR /app
 
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
 
 COPY package.json  ./
 COPY package-lock.json  ./
@@ -14,6 +14,6 @@ COPY . .
 
 EXPOSE 3000
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["sh", "/entrypoint.sh"]
 
 CMD ["npm", "run", "start"]
