@@ -325,7 +325,6 @@ describe('CreateDonorUseCase', () => {
     });
 
     it('should handle birth date edge cases', async () => {
-      const today = new Date();
       const leap = new Date(2000, 1, 29); // Leap year date
       const endOfYear = new Date(1999, 11, 31); // End of year
       const startOfYear = new Date(2000, 0, 1); // Start of year
