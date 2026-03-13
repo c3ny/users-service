@@ -12,6 +12,8 @@ RUN npm i
 
 COPY . .
 
+RUN npm run build
+
 EXPOSE 3000
 
 ENTRYPOINT ["sh", "/entrypoint.sh"]
