@@ -16,7 +16,6 @@ import { createMockUseCase } from '../../../test-setup';
 import { GenerateJwtUseCase } from '../../../modules/Hash/application/ports/in/generateJwt.useCase';
 import { UpdateUserAvatarUseCase } from '../../ports/in/user/updateUserAvatar.useCase';
 
-
 describe('UsersService', () => {
   let service: UsersService;
   let getUserUseCase: jest.Mocked<GetUserUseCase>;
@@ -54,7 +53,11 @@ describe('UsersService', () => {
         { provide: CreateDonorUseCase, useValue: mockCreateDonorUseCase },
         { provide: CreateCompanyUseCase, useValue: mockCreateCompanyUseCase },
         { provide: GenerateJwtUseCase, useValue: mockGenerateJwtUseCase },
-        { provide: UpdateUserAvatarUseCase, useValue: mockUpdateUserAvatarUseCase },
+        {
+          provide: UpdateUserAvatarUseCase,
+          useValue: mockUpdateUserAvatarUseCase,
+        },
+        { provide: GetUserUseCase, useValue: mockGetUserUseCase },
       ],
     }).compile();
 
@@ -68,6 +71,50 @@ describe('UsersService', () => {
     createDonorUseCase = module.get(CreateDonorUseCase);
     createCompanyUseCase = module.get(CreateCompanyUseCase);
     generateJwtUseCase = module.get(GenerateJwtUseCase);
+    updateUserAvatarUseCase = module.get(UpdateUserAvatarUseCase);
+  });
+
+  describe('uploadAvatar', () => {
+    const userId = '123e4567-e89b-12d3-a456-426614174000';
+    const avatarPath = '/tmp/avatar.png';
+
+    const mockUser: User = {
+      id: userId,
+      email: 'test@example.com',
+      password: 'hashedPassword',
+      name: 'John Doe',
+      city: 'São Paulo',
+      uf: 'SP',
+      personType: 'DONOR',
+      avatarPath,
+    };
+
+    it('should update user avatar successfully', async () => {
+      updateUserAvatarUseCase.execute.mockResolvedValue(
+        ResultFactory.success({ ...mockUser }),
+      );
+
+      const result = await service.uploadAvatar(userId, avatarPath);
+
+      expect(result.isSuccess).toBe(true);
+      expect(result.value?.avatarPath).toBe(avatarPath);
+      expect(result.value?.password).toBeUndefined(); // UsersService remove a senha
+      expect(updateUserAvatarUseCase.execute).toHaveBeenCalledWith({
+        userId,
+        avatarPath,
+      });
+    });
+
+    it('should return failure when avatar update fails', async () => {
+      updateUserAvatarUseCase.execute.mockResolvedValue(
+        ResultFactory.failure(ErrorsEnum.UserNotFoundError),
+      );
+
+      const result = await service.uploadAvatar(userId, avatarPath);
+
+      expect(result.isSuccess).toBe(false);
+      expect(result.error).toBe(ErrorsEnum.UserNotFoundError);
+    });
   });
 
   describe('getUserById', () => {
@@ -321,11 +368,18 @@ describe('UsersService', () => {
       );
       compareHashUseCase.execute.mockReturnValue(true);
 
-      const result = await service.authenticate({ ...authRequest, rememberMe: false });
+      generateJwtUseCase.execute.mockReturnValue('fake-jwt-token');
+
+      const result = await service.authenticate({
+        ...authRequest,
+        rememberMe: false,
+      });
 
       expect(result.isSuccess).toBe(true);
       expect(result.value?.user.password).toBeUndefined();
       expect(result.value?.user.email).toBe(authRequest.email);
+      expect(result.value?.token).toBe('fake-jwt-token');
+
       expect(getUserByEmailUseCase.execute).toHaveBeenCalledWith(
         authRequest.email,
       );
@@ -333,6 +387,15 @@ describe('UsersService', () => {
         password: authRequest.password,
         hash: 'hashedPassword123',
       });
+
+      expect(generateJwtUseCase.execute).toHaveBeenCalledWith(
+        {
+          email: mockUser.email,
+          id: mockUser.id,
+          personType: mockUser.personType,
+        },
+        '1h',
+      );
     });
 
     it('should return failure when user is not found', async () => {
@@ -340,7 +403,10 @@ describe('UsersService', () => {
         ResultFactory.failure(ErrorsEnum.UserNotFound),
       );
 
-      const result = await service.authenticate({ ...authRequest, rememberMe: false });
+      const result = await service.authenticate({
+        ...authRequest,
+        rememberMe: false,
+      });
 
       expect(result.isSuccess).toBe(false);
       expect(result.error).toBe(ErrorsEnum.UserNotFound);
@@ -353,7 +419,10 @@ describe('UsersService', () => {
       );
       compareHashUseCase.execute.mockReturnValue(false);
 
-      const result = await service.authenticate({ ...authRequest, rememberMe: false });
+      const result = await service.authenticate({
+        ...authRequest,
+        rememberMe: false,
+      });
 
       expect(result.isSuccess).toBe(false);
       expect(result.error).toBe(ErrorsEnum.InvalidPassword);

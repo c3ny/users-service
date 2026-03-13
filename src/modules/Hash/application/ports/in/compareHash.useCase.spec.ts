@@ -177,7 +177,7 @@ describe('CompareHashUseCase', () => {
         { password: 'PASSWORD123', hash: 'hash1', expected: false },
       ];
 
-      testCases.forEach((testCase, index) => {
+      testCases.forEach((testCase) => {
         const params: CompareHashUseCaseParams = {
           password: testCase.password,
           hash: testCase.hash,
@@ -294,7 +294,7 @@ describe('CompareHashUseCase', () => {
         { password: 'password5', hash: 'hash5', expected: true },
       ];
 
-      testCases.forEach((testCase, index) => {
+      testCases.forEach((testCase) => {
         hashRepository.compare.mockReturnValueOnce(testCase.expected);
       });
 

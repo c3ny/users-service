@@ -24,6 +24,16 @@ export default tseslint.config(
     },
   },
   {
+    
+      
+        files: ['src/**/*.spec.ts'],
+        rules: {
+          '@typescript-eslint/no-explicit-any': 'off',
+          '@typescript-eslint/unbound-method': 'off'
+      },
+    
+  },
+  {
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-floating-promises': 'warn',
