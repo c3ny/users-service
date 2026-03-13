@@ -1,0 +1,60 @@
+c0ae9dc6e09ae3c5709cdf425e75654b
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "GenerateJwtUseCase", {
+    enumerable: true,
+    get: function() {
+        return GenerateJwtUseCase;
+    }
+});
+const _jwtrepositoryport = require("../out/jwt-repository.port");
+const _common = require("@nestjs/common");
+const _constants = require("@/modules/Hash/constants");
+function _define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+function _ts_decorate(decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for(var i = decorators.length - 1; i >= 0; i--)if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+}
+function _ts_metadata(k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+}
+function _ts_param(paramIndex, decorator) {
+    return function(target, key) {
+        decorator(target, key, paramIndex);
+    };
+}
+let GenerateJwtUseCase = class GenerateJwtUseCase {
+    execute(payload, expiresIn) {
+        return this.jwtRepository.generate(payload, expiresIn);
+    }
+    constructor(jwtRepository){
+        _define_property(this, "jwtRepository", void 0);
+        this.jwtRepository = jwtRepository;
+    }
+};
+GenerateJwtUseCase = _ts_decorate([
+    (0, _common.Injectable)(),
+    _ts_param(0, (0, _common.Inject)(_constants.JWT_REPOSITORY)),
+    _ts_metadata("design:type", Function),
+    _ts_metadata("design:paramtypes", [
+        typeof _jwtrepositoryport.JwtRepositoryPort === "undefined" ? Object : _jwtrepositoryport.JwtRepositoryPort
+    ])
+], GenerateJwtUseCase);
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkM6XFxVc2Vyc1xcVXN1YXJpb1xcRG9jdW1lbnRzXFxQcm9qZXRvXFx1c2Vycy1zZXJ2aWNlXFxzcmNcXG1vZHVsZXNcXEhhc2hcXGFwcGxpY2F0aW9uXFxwb3J0c1xcaW5cXGdlbmVyYXRlSnd0LnVzZUNhc2UudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgVXNlQ2FzZSB9IGZyb20gJ0AvYXBwbGljYXRpb24vdHlwZXMvdXNlQ2FzZS50eXBlcyc7XHJcbmltcG9ydCB7IEp3dFBheWxvYWQsIEp3dFJlcG9zaXRvcnlQb3J0IH0gZnJvbSAnLi4vb3V0L2p3dC1yZXBvc2l0b3J5LnBvcnQnO1xyXG5pbXBvcnQgeyBJbmplY3QsIEluamVjdGFibGUgfSBmcm9tICdAbmVzdGpzL2NvbW1vbic7XHJcbmltcG9ydCB7IEpXVF9SRVBPU0lUT1JZIH0gZnJvbSAnQC9tb2R1bGVzL0hhc2gvY29uc3RhbnRzJztcclxuXHJcbkBJbmplY3RhYmxlKClcclxuZXhwb3J0IGNsYXNzIEdlbmVyYXRlSnd0VXNlQ2FzZSBpbXBsZW1lbnRzIFVzZUNhc2U8Snd0UGF5bG9hZCwgc3RyaW5nPiB7XHJcbiAgY29uc3RydWN0b3IoXHJcbiAgICBASW5qZWN0KEpXVF9SRVBPU0lUT1JZKVxyXG4gICAgcHJpdmF0ZSByZWFkb25seSBqd3RSZXBvc2l0b3J5OiBKd3RSZXBvc2l0b3J5UG9ydCxcclxuICApIHt9XHJcblxyXG4gIGV4ZWN1dGUoXHJcbiAgICBwYXlsb2FkOiBKd3RQYXlsb2FkLFxyXG4gICAgZXhwaXJlc0luPzogYCR7bnVtYmVyfWhgIHwgYCR7bnVtYmVyfWRgLFxyXG4gICk6IHN0cmluZyB7XHJcbiAgICByZXR1cm4gdGhpcy5qd3RSZXBvc2l0b3J5LmdlbmVyYXRlKHBheWxvYWQsIGV4cGlyZXNJbik7XHJcbiAgfVxyXG59XHJcbiJdLCJuYW1lcyI6WyJHZW5lcmF0ZUp3dFVzZUNhc2UiLCJleGVjdXRlIiwicGF5bG9hZCIsImV4cGlyZXNJbiIsImp3dFJlcG9zaXRvcnkiLCJnZW5lcmF0ZSJdLCJtYXBwaW5ncyI6Ijs7OzsrQkFNYUE7OztlQUFBQTs7O21DQUxpQzt3QkFDWDsyQkFDSjs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztBQUd4QixJQUFBLEFBQU1BLHFCQUFOLE1BQU1BO0lBTVhDLFFBQ0VDLE9BQW1CLEVBQ25CQyxTQUF1QyxFQUMvQjtRQUNSLE9BQU8sSUFBSSxDQUFDQyxhQUFhLENBQUNDLFFBQVEsQ0FBQ0gsU0FBU0M7SUFDOUM7SUFWQSxZQUNFLEFBQ2lCQyxhQUFnQyxDQUNqRDs7YUFEaUJBLGdCQUFBQTtJQUNoQjtBQVFMIn0=

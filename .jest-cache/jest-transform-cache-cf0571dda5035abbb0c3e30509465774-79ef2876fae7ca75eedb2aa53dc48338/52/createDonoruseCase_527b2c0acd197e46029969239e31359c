@@ -1,0 +1,61 @@
+672201389bf379a04dcf7ece30ba394d
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "CreateDonorUseCase", {
+    enumerable: true,
+    get: function() {
+        return CreateDonorUseCase;
+    }
+});
+const _donorrepositoryport = require("../../out/donor-repository.port");
+const _resulttypes = require("@/application/types/result.types");
+const _common = require("@nestjs/common");
+const _constants = require("@/constants");
+function _define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+function _ts_decorate(decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for(var i = decorators.length - 1; i >= 0; i--)if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+}
+function _ts_metadata(k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+}
+function _ts_param(paramIndex, decorator) {
+    return function(target, key) {
+        decorator(target, key, paramIndex);
+    };
+}
+let CreateDonorUseCase = class CreateDonorUseCase {
+    async execute(donor) {
+        const savedDonor = await this.donorRepository.save(donor);
+        return _resulttypes.ResultFactory.success(savedDonor);
+    }
+    constructor(donorRepository){
+        _define_property(this, "donorRepository", void 0);
+        this.donorRepository = donorRepository;
+    }
+};
+CreateDonorUseCase = _ts_decorate([
+    _ts_param(0, (0, _common.Inject)(_constants.DONOR_REPOSITORY)),
+    _ts_metadata("design:type", Function),
+    _ts_metadata("design:paramtypes", [
+        typeof _donorrepositoryport.DonorRepositoryPort === "undefined" ? Object : _donorrepositoryport.DonorRepositoryPort
+    ])
+], CreateDonorUseCase);
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkM6XFxVc2Vyc1xcVXN1YXJpb1xcRG9jdW1lbnRzXFxQcm9qZXRvXFx1c2Vycy1zZXJ2aWNlXFxzcmNcXGFwcGxpY2F0aW9uXFxwb3J0c1xcaW5cXGRvbm9yXFxjcmVhdGVEb25vci51c2VDYXNlLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IFVzZUNhc2UgfSBmcm9tICdAL2FwcGxpY2F0aW9uL3R5cGVzL3VzZUNhc2UudHlwZXMnO1xyXG5pbXBvcnQgeyBEb25vclJlcG9zaXRvcnlQb3J0IH0gZnJvbSAnLi4vLi4vb3V0L2Rvbm9yLXJlcG9zaXRvcnkucG9ydCc7XHJcbmltcG9ydCB7IERvbm9yIH0gZnJvbSAnQC9hcHBsaWNhdGlvbi9jb3JlL2RvbWFpbi9kb25vci5lbnRpdHknO1xyXG5pbXBvcnQgeyBSZXN1bHQsIFJlc3VsdEZhY3RvcnkgfSBmcm9tICdAL2FwcGxpY2F0aW9uL3R5cGVzL3Jlc3VsdC50eXBlcyc7XHJcbmltcG9ydCB7IEluamVjdCB9IGZyb20gJ0BuZXN0anMvY29tbW9uJztcclxuaW1wb3J0IHsgRE9OT1JfUkVQT1NJVE9SWSB9IGZyb20gJ0AvY29uc3RhbnRzJztcclxuXHJcbmV4cG9ydCBjbGFzcyBDcmVhdGVEb25vclVzZUNhc2VcclxuICBpbXBsZW1lbnRzIFVzZUNhc2U8RG9ub3IsIFByb21pc2U8UmVzdWx0PERvbm9yPj4+XHJcbntcclxuICBjb25zdHJ1Y3RvcihcclxuICAgIEBJbmplY3QoRE9OT1JfUkVQT1NJVE9SWSlcclxuICAgIHByaXZhdGUgcmVhZG9ubHkgZG9ub3JSZXBvc2l0b3J5OiBEb25vclJlcG9zaXRvcnlQb3J0LFxyXG4gICkge31cclxuXHJcbiAgYXN5bmMgZXhlY3V0ZShkb25vcjogT21pdDxEb25vciwgJ2lkJz4pOiBQcm9taXNlPFJlc3VsdDxEb25vcj4+IHtcclxuICAgIGNvbnN0IHNhdmVkRG9ub3IgPSBhd2FpdCB0aGlzLmRvbm9yUmVwb3NpdG9yeS5zYXZlKGRvbm9yKTtcclxuXHJcbiAgICByZXR1cm4gUmVzdWx0RmFjdG9yeS5zdWNjZXNzKHNhdmVkRG9ub3IpO1xyXG4gIH1cclxufVxyXG4iXSwibmFtZXMiOlsiQ3JlYXRlRG9ub3JVc2VDYXNlIiwiZXhlY3V0ZSIsImRvbm9yIiwic2F2ZWREb25vciIsImRvbm9yUmVwb3NpdG9yeSIsInNhdmUiLCJSZXN1bHRGYWN0b3J5Iiwic3VjY2VzcyJdLCJtYXBwaW5ncyI6Ijs7OzsrQkFPYUE7OztlQUFBQTs7O3FDQU51Qjs2QkFFRTt3QkFDZjsyQkFDVTs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztBQUUxQixJQUFBLEFBQU1BLHFCQUFOLE1BQU1BO0lBUVgsTUFBTUMsUUFBUUMsS0FBd0IsRUFBMEI7UUFDOUQsTUFBTUMsYUFBYSxNQUFNLElBQUksQ0FBQ0MsZUFBZSxDQUFDQyxJQUFJLENBQUNIO1FBRW5ELE9BQU9JLDBCQUFhLENBQUNDLE9BQU8sQ0FBQ0o7SUFDL0I7SUFUQSxZQUNFLEFBQ2lCQyxlQUFvQyxDQUNyRDs7YUFEaUJBLGtCQUFBQTtJQUNoQjtBQU9MIn0=
