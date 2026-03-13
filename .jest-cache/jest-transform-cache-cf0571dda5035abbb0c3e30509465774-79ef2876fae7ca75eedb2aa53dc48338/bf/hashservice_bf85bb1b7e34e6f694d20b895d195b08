@@ -1,0 +1,63 @@
+71b2cfadf52f3704e94632f7c2567e0c
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "HashService", {
+    enumerable: true,
+    get: function() {
+        return HashService;
+    }
+});
+const _common = require("@nestjs/common");
+const _compareHashuseCase = require("../../ports/in/compareHash.useCase");
+const _hashStringuseCase = require("../../ports/in/hashString.useCase");
+function _define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+function _ts_decorate(decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for(var i = decorators.length - 1; i >= 0; i--)if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+}
+function _ts_metadata(k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+}
+let HashService = class HashService {
+    hash(password) {
+        return this.hashStringUseCase.execute(password);
+    }
+    compare(compare, passwordWithHash) {
+        return this.compareHashUseCase.execute({
+            password: compare,
+            hash: passwordWithHash
+        });
+    }
+    constructor(hashStringUseCase, compareHashUseCase){
+        _define_property(this, "hashStringUseCase", void 0);
+        _define_property(this, "compareHashUseCase", void 0);
+        this.hashStringUseCase = hashStringUseCase;
+        this.compareHashUseCase = compareHashUseCase;
+    }
+};
+HashService = _ts_decorate([
+    (0, _common.Injectable)(),
+    _ts_metadata("design:type", Function),
+    _ts_metadata("design:paramtypes", [
+        typeof _hashStringuseCase.HashStringUseCase === "undefined" ? Object : _hashStringuseCase.HashStringUseCase,
+        typeof _compareHashuseCase.CompareHashUseCase === "undefined" ? Object : _compareHashuseCase.CompareHashUseCase
+    ])
+], HashService);
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkM6XFxVc2Vyc1xcVXN1YXJpb1xcRG9jdW1lbnRzXFxQcm9qZXRvXFx1c2Vycy1zZXJ2aWNlXFxzcmNcXG1vZHVsZXNcXEhhc2hcXGFwcGxpY2F0aW9uXFxjb3JlXFxzZXJ2aWNlXFxoYXNoLnNlcnZpY2UudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgSW5qZWN0YWJsZSB9IGZyb20gJ0BuZXN0anMvY29tbW9uJztcclxuaW1wb3J0IHsgQ29tcGFyZUhhc2hVc2VDYXNlIH0gZnJvbSAnLi4vLi4vcG9ydHMvaW4vY29tcGFyZUhhc2gudXNlQ2FzZSc7XHJcbmltcG9ydCB7IEhhc2hTdHJpbmdVc2VDYXNlIH0gZnJvbSAnLi4vLi4vcG9ydHMvaW4vaGFzaFN0cmluZy51c2VDYXNlJztcclxuXHJcbkBJbmplY3RhYmxlKClcclxuZXhwb3J0IGNsYXNzIEhhc2hTZXJ2aWNlIHtcclxuICBjb25zdHJ1Y3RvcihcclxuICAgIHByaXZhdGUgcmVhZG9ubHkgaGFzaFN0cmluZ1VzZUNhc2U6IEhhc2hTdHJpbmdVc2VDYXNlLFxyXG4gICAgcHJpdmF0ZSByZWFkb25seSBjb21wYXJlSGFzaFVzZUNhc2U6IENvbXBhcmVIYXNoVXNlQ2FzZSxcclxuICApIHt9XHJcbiAgaGFzaChwYXNzd29yZDogc3RyaW5nKTogc3RyaW5nIHtcclxuICAgIHJldHVybiB0aGlzLmhhc2hTdHJpbmdVc2VDYXNlLmV4ZWN1dGUocGFzc3dvcmQpO1xyXG4gIH1cclxuXHJcbiAgY29tcGFyZShjb21wYXJlOiBzdHJpbmcsIHBhc3N3b3JkV2l0aEhhc2g6IGAke3N0cmluZ306JHtzdHJpbmd9YCk6IGJvb2xlYW4ge1xyXG4gICAgcmV0dXJuIHRoaXMuY29tcGFyZUhhc2hVc2VDYXNlLmV4ZWN1dGUoe1xyXG4gICAgICBwYXNzd29yZDogY29tcGFyZSxcclxuICAgICAgaGFzaDogcGFzc3dvcmRXaXRoSGFzaCxcclxuICAgIH0pO1xyXG4gIH1cclxufVxyXG4iXSwibmFtZXMiOlsiSGFzaFNlcnZpY2UiLCJoYXNoIiwicGFzc3dvcmQiLCJoYXNoU3RyaW5nVXNlQ2FzZSIsImV4ZWN1dGUiLCJjb21wYXJlIiwicGFzc3dvcmRXaXRoSGFzaCIsImNvbXBhcmVIYXNoVXNlQ2FzZSJdLCJtYXBwaW5ncyI6Ijs7OzsrQkFLYUE7OztlQUFBQTs7O3dCQUxjO29DQUNRO21DQUNEOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztBQUczQixJQUFBLEFBQU1BLGNBQU4sTUFBTUE7SUFLWEMsS0FBS0MsUUFBZ0IsRUFBVTtRQUM3QixPQUFPLElBQUksQ0FBQ0MsaUJBQWlCLENBQUNDLE9BQU8sQ0FBQ0Y7SUFDeEM7SUFFQUcsUUFBUUEsT0FBZSxFQUFFQyxnQkFBdUMsRUFBVztRQUN6RSxPQUFPLElBQUksQ0FBQ0Msa0JBQWtCLENBQUNILE9BQU8sQ0FBQztZQUNyQ0YsVUFBVUc7WUFDVkosTUFBTUs7UUFDUjtJQUNGO0lBYkEsWUFDRSxBQUFpQkgsaUJBQW9DLEVBQ3JELEFBQWlCSSxrQkFBc0MsQ0FDdkQ7OzthQUZpQkosb0JBQUFBO2FBQ0FJLHFCQUFBQTtJQUNoQjtBQVdMIn0=

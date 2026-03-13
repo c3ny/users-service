@@ -1,0 +1,66 @@
+a18240ec6ba57cc1449619388828febf
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "GetUserUseCase", {
+    enumerable: true,
+    get: function() {
+        return GetUserUseCase;
+    }
+});
+const _constants = require("@/constants");
+const _usersrepositoryport = require("../../out/users-repository.port");
+const _common = require("@nestjs/common");
+const _resulttypes = require("@/application/types/result.types");
+const _errorsenum = require("@/application/core/errors/errors.enum");
+function _define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+function _ts_decorate(decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for(var i = decorators.length - 1; i >= 0; i--)if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+}
+function _ts_metadata(k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+}
+function _ts_param(paramIndex, decorator) {
+    return function(target, key) {
+        decorator(target, key, paramIndex);
+    };
+}
+let GetUserUseCase = class GetUserUseCase {
+    async execute(id) {
+        const user = await this.usersRepository.findById(id);
+        if (!user) {
+            return _resulttypes.ResultFactory.failure(_errorsenum.ErrorsEnum.UserNotFoundError);
+        }
+        return _resulttypes.ResultFactory.success(user);
+    }
+    constructor(usersRepository){
+        _define_property(this, "usersRepository", void 0);
+        this.usersRepository = usersRepository;
+    }
+};
+GetUserUseCase = _ts_decorate([
+    (0, _common.Injectable)(),
+    _ts_param(0, (0, _common.Inject)(_constants.USERS_REPOSITORY)),
+    _ts_metadata("design:type", Function),
+    _ts_metadata("design:paramtypes", [
+        typeof _usersrepositoryport.UserRepositoryPort === "undefined" ? Object : _usersrepositoryport.UserRepositoryPort
+    ])
+], GetUserUseCase);
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkM6XFxVc2Vyc1xcVXN1YXJpb1xcRG9jdW1lbnRzXFxQcm9qZXRvXFx1c2Vycy1zZXJ2aWNlXFxzcmNcXGFwcGxpY2F0aW9uXFxwb3J0c1xcaW5cXHVzZXJcXGdldFVzZXIudXNlQ2FzZS50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBVU0VSU19SRVBPU0lUT1JZIH0gZnJvbSAnQC9jb25zdGFudHMnO1xyXG5pbXBvcnQgeyBVc2VyUmVwb3NpdG9yeVBvcnQgfSBmcm9tICcuLi8uLi9vdXQvdXNlcnMtcmVwb3NpdG9yeS5wb3J0JztcclxuaW1wb3J0IHsgSW5qZWN0LCBJbmplY3RhYmxlIH0gZnJvbSAnQG5lc3Rqcy9jb21tb24nO1xyXG5pbXBvcnQgeyBVc2VyIH0gZnJvbSAnQC9hcHBsaWNhdGlvbi9jb3JlL2RvbWFpbi91c2VyLmVudGl0eSc7XHJcbmltcG9ydCB7IFVzZUNhc2UgfSBmcm9tICdAL2FwcGxpY2F0aW9uL3R5cGVzL3VzZUNhc2UudHlwZXMnO1xyXG5pbXBvcnQgeyBSZXN1bHQsIFJlc3VsdEZhY3RvcnkgfSBmcm9tICdAL2FwcGxpY2F0aW9uL3R5cGVzL3Jlc3VsdC50eXBlcyc7XHJcbmltcG9ydCB7IEVycm9yc0VudW0gfSBmcm9tICdAL2FwcGxpY2F0aW9uL2NvcmUvZXJyb3JzL2Vycm9ycy5lbnVtJztcclxuXHJcbkBJbmplY3RhYmxlKClcclxuZXhwb3J0IGNsYXNzIEdldFVzZXJVc2VDYXNlIGltcGxlbWVudHMgVXNlQ2FzZTxzdHJpbmcsIFByb21pc2U8UmVzdWx0PFVzZXI+Pj4ge1xyXG4gIGNvbnN0cnVjdG9yKFxyXG4gICAgQEluamVjdChVU0VSU19SRVBPU0lUT1JZKVxyXG4gICAgcHJpdmF0ZSByZWFkb25seSB1c2Vyc1JlcG9zaXRvcnk6IFVzZXJSZXBvc2l0b3J5UG9ydCxcclxuICApIHt9XHJcblxyXG4gIGFzeW5jIGV4ZWN1dGUoaWQ6IHN0cmluZyk6IFByb21pc2U8UmVzdWx0PFVzZXI+PiB7XHJcbiAgICBjb25zdCB1c2VyID0gYXdhaXQgdGhpcy51c2Vyc1JlcG9zaXRvcnkuZmluZEJ5SWQoaWQpO1xyXG5cclxuICAgIGlmICghdXNlcikge1xyXG4gICAgICByZXR1cm4gUmVzdWx0RmFjdG9yeS5mYWlsdXJlKEVycm9yc0VudW0uVXNlck5vdEZvdW5kRXJyb3IpO1xyXG4gICAgfVxyXG5cclxuICAgIHJldHVybiBSZXN1bHRGYWN0b3J5LnN1Y2Nlc3ModXNlcik7XHJcbiAgfVxyXG59XHJcbiJdLCJuYW1lcyI6WyJHZXRVc2VyVXNlQ2FzZSIsImV4ZWN1dGUiLCJpZCIsInVzZXIiLCJ1c2Vyc1JlcG9zaXRvcnkiLCJmaW5kQnlJZCIsIlJlc3VsdEZhY3RvcnkiLCJmYWlsdXJlIiwiRXJyb3JzRW51bSIsIlVzZXJOb3RGb3VuZEVycm9yIiwic3VjY2VzcyJdLCJtYXBwaW5ncyI6Ijs7OzsrQkFTYUE7OztlQUFBQTs7OzJCQVRvQjtxQ0FDRTt3QkFDQTs2QkFHRzs0QkFDWDs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztBQUdwQixJQUFBLEFBQU1BLGlCQUFOLE1BQU1BO0lBTVgsTUFBTUMsUUFBUUMsRUFBVSxFQUF5QjtRQUMvQyxNQUFNQyxPQUFPLE1BQU0sSUFBSSxDQUFDQyxlQUFlLENBQUNDLFFBQVEsQ0FBQ0g7UUFFakQsSUFBSSxDQUFDQyxNQUFNO1lBQ1QsT0FBT0csMEJBQWEsQ0FBQ0MsT0FBTyxDQUFDQyxzQkFBVSxDQUFDQyxpQkFBaUI7UUFDM0Q7UUFFQSxPQUFPSCwwQkFBYSxDQUFDSSxPQUFPLENBQUNQO0lBQy9CO0lBYkEsWUFDRSxBQUNpQkMsZUFBbUMsQ0FDcEQ7O2FBRGlCQSxrQkFBQUE7SUFDaEI7QUFXTCJ9

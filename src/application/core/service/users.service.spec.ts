@@ -13,6 +13,9 @@ import { CreateUserRequest, PersonType } from '../../types/user.types';
 import { ResultFactory } from '../../types/result.types';
 import { ErrorsEnum } from '../errors/errors.enum';
 import { createMockUseCase } from '../../../test-setup';
+import { GenerateJwtUseCase } from '../../../modules/Hash/application/ports/in/generateJwt.useCase';
+import { UpdateUserAvatarUseCase } from '../../ports/in/user/updateUserAvatar.useCase';
+
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -24,6 +27,8 @@ describe('UsersService', () => {
   let changePasswordUseCase: jest.Mocked<ChangePasswordUseCase>;
   let createDonorUseCase: jest.Mocked<CreateDonorUseCase>;
   let createCompanyUseCase: jest.Mocked<CreateCompanyUseCase>;
+  let generateJwtUseCase: jest.Mocked<GenerateJwtUseCase>;
+  let updateUserAvatarUseCase: jest.Mocked<UpdateUserAvatarUseCase>;
 
   beforeAll(async () => {
     const mockGetUserUseCase = createMockUseCase();
@@ -34,6 +39,8 @@ describe('UsersService', () => {
     const mockChangePasswordUseCase = createMockUseCase();
     const mockCreateDonorUseCase = createMockUseCase();
     const mockCreateCompanyUseCase = createMockUseCase();
+    const mockGenerateJwtUseCase = createMockUseCase();
+    const mockUpdateUserAvatarUseCase = createMockUseCase();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -46,6 +53,8 @@ describe('UsersService', () => {
         { provide: ChangePasswordUseCase, useValue: mockChangePasswordUseCase },
         { provide: CreateDonorUseCase, useValue: mockCreateDonorUseCase },
         { provide: CreateCompanyUseCase, useValue: mockCreateCompanyUseCase },
+        { provide: GenerateJwtUseCase, useValue: mockGenerateJwtUseCase },
+        { provide: UpdateUserAvatarUseCase, useValue: mockUpdateUserAvatarUseCase },
       ],
     }).compile();
 
@@ -58,6 +67,7 @@ describe('UsersService', () => {
     changePasswordUseCase = module.get(ChangePasswordUseCase);
     createDonorUseCase = module.get(CreateDonorUseCase);
     createCompanyUseCase = module.get(CreateCompanyUseCase);
+    generateJwtUseCase = module.get(GenerateJwtUseCase);
   });
 
   describe('getUserById', () => {
@@ -311,11 +321,11 @@ describe('UsersService', () => {
       );
       compareHashUseCase.execute.mockReturnValue(true);
 
-      const result = await service.authenticate(authRequest);
+      const result = await service.authenticate({ ...authRequest, rememberMe: false });
 
       expect(result.isSuccess).toBe(true);
-      expect(result.value?.password).toBeUndefined();
-      expect(result.value?.email).toBe(authRequest.email);
+      expect(result.value?.user.password).toBeUndefined();
+      expect(result.value?.user.email).toBe(authRequest.email);
       expect(getUserByEmailUseCase.execute).toHaveBeenCalledWith(
         authRequest.email,
       );
@@ -330,7 +340,7 @@ describe('UsersService', () => {
         ResultFactory.failure(ErrorsEnum.UserNotFound),
       );
 
-      const result = await service.authenticate(authRequest);
+      const result = await service.authenticate({ ...authRequest, rememberMe: false });
 
       expect(result.isSuccess).toBe(false);
       expect(result.error).toBe(ErrorsEnum.UserNotFound);
@@ -343,7 +353,7 @@ describe('UsersService', () => {
       );
       compareHashUseCase.execute.mockReturnValue(false);
 
-      const result = await service.authenticate(authRequest);
+      const result = await service.authenticate({ ...authRequest, rememberMe: false });
 
       expect(result.isSuccess).toBe(false);
       expect(result.error).toBe(ErrorsEnum.InvalidPassword);
