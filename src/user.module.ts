@@ -31,9 +31,9 @@ import { HealthModule } from './modules/Health/health.module';
       url: process.env.DATABASE_URL,
       entities: [Users, Donors, Companies],
       synchronize: true,
-      ssl: {
-        rejectUnauthorized: false,
-      },
+      ssl: process.env.DATABASE_URL?.includes('heroku')
+      ? { rejectUnauthorized: false }
+      : false,
     }),
     TypeOrmModule.forFeature([Users, Donors, Companies]),
     HashModule,
