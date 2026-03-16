@@ -64,6 +64,9 @@ jobs:
             git push origin v0.0.0
           fi
 
+      - name: Instalar semver CLI
+        run: npm install -g semver
+
       - name: Calcular nova versão
         id: version
         run: |
