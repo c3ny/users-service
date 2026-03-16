@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+         fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -61,6 +63,9 @@ jobs:
             git tag -a v0.0.0 -m "Initial release"
             git push origin v0.0.0
           fi
+
+      - name: Instalar semver CLI
+        run: npm install -g semver
 
       - name: Calcular nova versão
         id: version
