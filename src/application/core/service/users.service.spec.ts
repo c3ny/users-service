@@ -29,8 +29,6 @@ describe('UsersService', () => {
   let createCompanyUseCase: jest.Mocked<CreateCompanyUseCase>;
   let generateJwtUseCase: jest.Mocked<GenerateJwtUseCase>;
   let updateUserAvatarUseCase: jest.Mocked<UpdateUserAvatarUseCase>;
-  let getCompanyByUserIdUseCase: jest.Mocked<GetCompanyByUserIdUseCase>;
-  let bloodstockRepository: jest.Mocked<BloodstockRepository>;
 
   beforeAll(async () => {
     const mockGetUserUseCase = createMockUseCase();
@@ -58,9 +56,15 @@ describe('UsersService', () => {
         { provide: CreateDonorUseCase, useValue: mockCreateDonorUseCase },
         { provide: CreateCompanyUseCase, useValue: mockCreateCompanyUseCase },
         { provide: GenerateJwtUseCase, useValue: mockGenerateJwtUseCase },
-        { provide: UpdateUserAvatarUseCase, useValue: mockUpdateUserAvatarUseCase },
+        {
+          provide: UpdateUserAvatarUseCase,
+          useValue: mockUpdateUserAvatarUseCase,
+        },
         { provide: GetUserUseCase, useValue: mockGetUserUseCase },
-        { provide: GetCompanyByUserIdUseCase, useValue: mockGetCompanyByUserIdUseCase },
+        {
+          provide: GetCompanyByUserIdUseCase,
+          useValue: mockGetCompanyByUserIdUseCase,
+        },
         { provide: BloodstockRepository, useValue: mockBloodstockRepository },
       ],
     }).compile();
@@ -76,15 +80,12 @@ describe('UsersService', () => {
     createCompanyUseCase = module.get(CreateCompanyUseCase);
     generateJwtUseCase = module.get(GenerateJwtUseCase);
     updateUserAvatarUseCase = module.get(UpdateUserAvatarUseCase);
-    getCompanyByUserIdUseCase = module.get(GetCompanyByUserIdUseCase);
-    bloodstockRepository = module.get(BloodstockRepository);
   });
-
 
   describe('uploadAvatar', () => {
     const userId = '123e4567-e89b-12d3-a456-426614174000';
     const avatarPath = '/tmp/avatar.png';
-  
+
     const mockUser: User = {
       id: userId,
       email: 'test@example.com',
@@ -95,14 +96,14 @@ describe('UsersService', () => {
       personType: 'DONOR',
       avatarPath,
     };
-  
+
     it('should update user avatar successfully', async () => {
       updateUserAvatarUseCase.execute.mockResolvedValue(
         ResultFactory.success({ ...mockUser }),
       );
-  
+
       const result = await service.uploadAvatar(userId, avatarPath);
-  
+
       expect(result.isSuccess).toBe(true);
       expect(result.value?.avatarPath).toBe(avatarPath);
       expect(result.value?.password).toBeUndefined(); // UsersService remove a senha
@@ -111,14 +112,14 @@ describe('UsersService', () => {
         avatarPath,
       });
     });
-  
+
     it('should return failure when avatar update fails', async () => {
       updateUserAvatarUseCase.execute.mockResolvedValue(
         ResultFactory.failure(ErrorsEnum.UserNotFoundError),
       );
-  
+
       const result = await service.uploadAvatar(userId, avatarPath);
-  
+
       expect(result.isSuccess).toBe(false);
       expect(result.error).toBe(ErrorsEnum.UserNotFoundError);
     });

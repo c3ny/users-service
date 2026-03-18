@@ -1,5 +1,3 @@
-import e from "express";
-
 export type JwtPayload = {
   id: string;
   email: string;

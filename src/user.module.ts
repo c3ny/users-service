@@ -34,8 +34,8 @@ import { BloodstockRepository } from './adapters/out/bloodstock.repository';
       entities: [Users, Donors, Companies],
       synchronize: true,
       ssl: process.env.DATABASE_URL?.includes('heroku')
-      ? { rejectUnauthorized: false }
-      : false,
+        ? { rejectUnauthorized: false }
+        : false,
     }),
     TypeOrmModule.forFeature([Users, Donors, Companies]),
     HashModule,

@@ -16,7 +16,7 @@ export class GetCompanyByUserIdUseCase {
     const company = await this.companyRepository.findByUserId(userId);
 
     if (!company) {
-      return ResultFactory.failure(ErrorsEnum.CompanyNotFoundError); 
+      return ResultFactory.failure(ErrorsEnum.CompanyNotFoundError);
     }
 
     return ResultFactory.success(company);
