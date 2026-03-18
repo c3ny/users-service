@@ -14,6 +14,8 @@ import { ResultFactory } from '../../types/result.types';
 import { ErrorsEnum } from '../errors/errors.enum';
 import { createMockUseCase } from '../../../test-setup';
 import { GenerateJwtUseCase } from '../../../modules/Hash/application/ports/in/generateJwt.useCase';
+import { GetCompanyByUserIdUseCase } from '../../ports/in/company/getCompanyByUserId.useCase';
+import { BloodstockRepository } from '../../../adapters/out/bloodstock.repository';
 import { UpdateUserAvatarUseCase } from '../../ports/in/user/updateUserAvatar.useCase';
 describe('UsersService', () => {
   let service: UsersService;
@@ -27,6 +29,8 @@ describe('UsersService', () => {
   let createCompanyUseCase: jest.Mocked<CreateCompanyUseCase>;
   let generateJwtUseCase: jest.Mocked<GenerateJwtUseCase>;
   let updateUserAvatarUseCase: jest.Mocked<UpdateUserAvatarUseCase>;
+  let getCompanyByUserIdUseCase: jest.Mocked<GetCompanyByUserIdUseCase>;
+  let bloodstockRepository: jest.Mocked<BloodstockRepository>;
 
   beforeAll(async () => {
     const mockGetUserUseCase = createMockUseCase();
@@ -39,6 +43,8 @@ describe('UsersService', () => {
     const mockCreateCompanyUseCase = createMockUseCase();
     const mockGenerateJwtUseCase = createMockUseCase();
     const mockUpdateUserAvatarUseCase = createMockUseCase();
+    const mockGetCompanyByUserIdUseCase = createMockUseCase();
+    const mockBloodstockRepository = { initializeCompanyStock: jest.fn() };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -54,6 +60,8 @@ describe('UsersService', () => {
         { provide: GenerateJwtUseCase, useValue: mockGenerateJwtUseCase },
         { provide: UpdateUserAvatarUseCase, useValue: mockUpdateUserAvatarUseCase },
         { provide: GetUserUseCase, useValue: mockGetUserUseCase },
+        { provide: GetCompanyByUserIdUseCase, useValue: mockGetCompanyByUserIdUseCase },
+        { provide: BloodstockRepository, useValue: mockBloodstockRepository },
       ],
     }).compile();
 
@@ -68,7 +76,10 @@ describe('UsersService', () => {
     createCompanyUseCase = module.get(CreateCompanyUseCase);
     generateJwtUseCase = module.get(GenerateJwtUseCase);
     updateUserAvatarUseCase = module.get(UpdateUserAvatarUseCase);
+    getCompanyByUserIdUseCase = module.get(GetCompanyByUserIdUseCase);
+    bloodstockRepository = module.get(BloodstockRepository);
   });
+
 
   describe('uploadAvatar', () => {
     const userId = '123e4567-e89b-12d3-a456-426614174000';
@@ -389,6 +400,7 @@ describe('UsersService', () => {
           email: mockUser.email,
           id: mockUser.id,
           personType: mockUser.personType,
+          companyId: null,
         },
         '1h',
       );
