@@ -19,6 +19,17 @@ export class CompanyRepository implements CompanyRepositoryPort {
     return CompanyMapper.toDomain(savedCompany);
   }
 
+  async findByUserId(userId: string): Promise<Company | null> {
+    const company = await this.companyRepository.findOne({
+      where: { user: { id: userId } },
+      relations: ['user'],
+    });
+
+    if (!company) return null;
+
+    return CompanyMapper.toDomain(company);
+  }
+
   async findById(id: string): Promise<Company | null> {
     const company = await this.companyRepository.findOneBy({ id });
 

@@ -14,6 +14,8 @@ import { CreateCompanyUseCase } from '@/application/ports/in/company/createCompa
 import { GenerateJwtUseCase } from '@/modules/Hash/application/ports/in/generateJwt.useCase';
 import { UpdateUserAvatarUseCase } from '@/application/ports/in/user/updateUserAvatar.useCase';
 import { AuthenticateUserDto } from '@/adapters/in/dto/authenticate-user.dto';
+import { GetCompanyByUserIdUseCase } from '@/application/ports/in/company/getCompanyByUserId.useCase';
+import { BloodstockRepository } from '@/adapters/out/bloodstock.repository';
 
 @Injectable()
 export class UsersService {
@@ -28,6 +30,8 @@ export class UsersService {
     private readonly createCompanyUseCase: CreateCompanyUseCase,
     private readonly generateJwtUseCase: GenerateJwtUseCase,
     private readonly updateUserAvatarUseCase: UpdateUserAvatarUseCase,
+    private readonly getCompanyByUserIdUseCase: GetCompanyByUserIdUseCase,
+    private readonly bloodstockRepository: BloodstockRepository,
   ) {}
 
   async getUserById(id: string): Promise<Result<User>> {
@@ -83,6 +87,12 @@ export class UsersService {
         if (!company.isSuccess) {
           return ResultFactory.partialSuccess(result.value);
         }
+        await this.bloodstockRepository.initializeCompanyStock({
+          companyId: company.value.id,
+          cnpj: user.cnpj,
+          cnes: user.cnes,
+          institutionName: user.institutionName,
+        });
 
         break;
       }
@@ -104,20 +114,32 @@ export class UsersService {
 
     const verifyPassword = this.compareHashUseCase.execute({
       password: user.password ?? '',
-      hash: findByEmail?.value?.password ?? '',
+      hash: findByEmail.value.password ?? '',
     });
 
     if (!verifyPassword) {
       return ResultFactory.failure(ErrorsEnum.InvalidPassword);
     }
 
+    // Busca companyId se for usuário do tipo COMPANY
+    let companyId: string | null = null;
+    if (findByEmail.value.personType === 'COMPANY') {
+      const companyResult = await this.getCompanyByUserIdUseCase.execute(
+        findByEmail.value.id,
+      );
+      if (companyResult.isSuccess) {
+        companyId = companyResult.value.id;
+      }
+    }
+
     delete findByEmail.value.password;
 
     const token = this.generateJwtUseCase.execute(
       {
-        email: findByEmail.value.email,
         id: findByEmail.value.id,
+        email: findByEmail.value.email,
         personType: findByEmail.value.personType,
+        companyId, // ← agora entra no token
       },
       user.rememberMe ? '30d' : '1h',
     );
@@ -127,7 +149,6 @@ export class UsersService {
       token,
     });
   }
-
   async changePassword(
     id: string,
     passwords: { old: string; new: string },

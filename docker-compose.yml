@@ -14,6 +14,8 @@ services:
     restart: unless-stopped
     env_file:
       - .env
+    networks:
+      - services-network
   postgres_users_service:
     container_name: postgres-users-service
     image: postgres:16
@@ -28,6 +30,8 @@ services:
       - 5432:5432
     volumes:
       - postgres_users_service_data:/var/lib/postgresql/data
+    networks:
+      - services-network
 
 volumes:
   postgres_users_service_data:
@@ -35,3 +39,8 @@ volumes:
 configs:
   httpd-config:
     external: true
+
+networks:
+  services-network:
+    name: services-network 
+    driver: bridge
