@@ -122,7 +122,7 @@ jobs:
             if [ "$CURRENT" != "${{ env.new_version }}" ]; then
               npm version ${{ env.new_version }} --no-git-tag-version
             else
-              echo "Versão já é ${{ env.new_version }}, pulando npm version"
+              echo "Versão já está ${{ env.new_version }}, pulando npm version"
             fi
       - name: Commit e push
         env:
