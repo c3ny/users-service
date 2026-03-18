@@ -118,8 +118,12 @@ jobs:
 
       - name: Atualizar versão no package.json
         run: |
-          npm version ${{ env.new_version }} --no-git-tag-version
-          
+            CURRENT=$(node -p "require('./package.json').version")
+            if [ "$CURRENT" != "${{ env.new_version }}" ]; then
+              npm version ${{ env.new_version }} --no-git-tag-version
+            else
+              echo "Versão já é ${{ env.new_version }}, pulando npm version"
+            fi
       - name: Commit e push
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
