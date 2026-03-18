@@ -14,6 +14,8 @@ import { ResultFactory } from '../../types/result.types';
 import { ErrorsEnum } from '../errors/errors.enum';
 import { createMockUseCase } from '../../../test-setup';
 import { GenerateJwtUseCase } from '../../../modules/Hash/application/ports/in/generateJwt.useCase';
+import { GetCompanyByUserIdUseCase } from '../../ports/in/company/getCompanyByUserId.useCase';
+import { BloodstockRepository } from '../../../adapters/out/bloodstock.repository';
 import { UpdateUserAvatarUseCase } from '../../ports/in/user/updateUserAvatar.useCase';
 describe('UsersService', () => {
   let service: UsersService;
@@ -39,6 +41,8 @@ describe('UsersService', () => {
     const mockCreateCompanyUseCase = createMockUseCase();
     const mockGenerateJwtUseCase = createMockUseCase();
     const mockUpdateUserAvatarUseCase = createMockUseCase();
+    const mockGetCompanyByUserIdUseCase = createMockUseCase();
+    const mockBloodstockRepository = { initializeCompanyStock: jest.fn() };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -52,8 +56,16 @@ describe('UsersService', () => {
         { provide: CreateDonorUseCase, useValue: mockCreateDonorUseCase },
         { provide: CreateCompanyUseCase, useValue: mockCreateCompanyUseCase },
         { provide: GenerateJwtUseCase, useValue: mockGenerateJwtUseCase },
-        { provide: UpdateUserAvatarUseCase, useValue: mockUpdateUserAvatarUseCase },
+        {
+          provide: UpdateUserAvatarUseCase,
+          useValue: mockUpdateUserAvatarUseCase,
+        },
         { provide: GetUserUseCase, useValue: mockGetUserUseCase },
+        {
+          provide: GetCompanyByUserIdUseCase,
+          useValue: mockGetCompanyByUserIdUseCase,
+        },
+        { provide: BloodstockRepository, useValue: mockBloodstockRepository },
       ],
     }).compile();
 
@@ -73,7 +85,7 @@ describe('UsersService', () => {
   describe('uploadAvatar', () => {
     const userId = '123e4567-e89b-12d3-a456-426614174000';
     const avatarPath = '/tmp/avatar.png';
-  
+
     const mockUser: User = {
       id: userId,
       email: 'test@example.com',
@@ -84,14 +96,14 @@ describe('UsersService', () => {
       personType: 'DONOR',
       avatarPath,
     };
-  
+
     it('should update user avatar successfully', async () => {
       updateUserAvatarUseCase.execute.mockResolvedValue(
         ResultFactory.success({ ...mockUser }),
       );
-  
+
       const result = await service.uploadAvatar(userId, avatarPath);
-  
+
       expect(result.isSuccess).toBe(true);
       expect(result.value?.avatarPath).toBe(avatarPath);
       expect(result.value?.password).toBeUndefined(); // UsersService remove a senha
@@ -100,14 +112,14 @@ describe('UsersService', () => {
         avatarPath,
       });
     });
-  
+
     it('should return failure when avatar update fails', async () => {
       updateUserAvatarUseCase.execute.mockResolvedValue(
         ResultFactory.failure(ErrorsEnum.UserNotFoundError),
       );
-  
+
       const result = await service.uploadAvatar(userId, avatarPath);
-  
+
       expect(result.isSuccess).toBe(false);
       expect(result.error).toBe(ErrorsEnum.UserNotFoundError);
     });
@@ -389,6 +401,7 @@ describe('UsersService', () => {
           email: mockUser.email,
           id: mockUser.id,
           personType: mockUser.personType,
+          companyId: null,
         },
         '1h',
       );

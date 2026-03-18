@@ -1,4 +1,9 @@
-export type JwtPayload = string | object;
+export type JwtPayload = {
+  id: string;
+  email: string;
+  personType: string;
+  companyId?: string | null;
+};
 
 export type JwtToken = string | object | null;
 

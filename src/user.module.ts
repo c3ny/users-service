@@ -23,6 +23,8 @@ import { CompanyRepository } from './adapters/out/company.repository';
 import { CreateCompanyUseCase } from './application/ports/in/company/createCompany.useCase';
 import { UpdateUserAvatarUseCase } from './application/ports/in/user/updateUserAvatar.useCase';
 import { HealthModule } from './modules/Health/health.module';
+import { GetCompanyByUserIdUseCase } from './application/ports/in/company/getCompanyByUserId.useCase';
+import { BloodstockRepository } from './adapters/out/bloodstock.repository';
 
 @Module({
   imports: [
@@ -32,8 +34,8 @@ import { HealthModule } from './modules/Health/health.module';
       entities: [Users, Donors, Companies],
       synchronize: true,
       ssl: process.env.DATABASE_URL?.includes('heroku')
-      ? { rejectUnauthorized: false }
-      : false,
+        ? { rejectUnauthorized: false }
+        : false,
     }),
     TypeOrmModule.forFeature([Users, Donors, Companies]),
     HashModule,
@@ -49,7 +51,9 @@ import { HealthModule } from './modules/Health/health.module';
     ChangeUserDataUseCase,
     CreateDonorUseCase,
     CreateCompanyUseCase,
+    GetCompanyByUserIdUseCase,
     UpdateUserAvatarUseCase,
+    BloodstockRepository,
     { provide: USERS_REPOSITORY, useClass: UsersRepository },
     { provide: DONOR_REPOSITORY, useClass: DonorRepository },
     { provide: COMPANY_REPOSITORY, useClass: CompanyRepository },
