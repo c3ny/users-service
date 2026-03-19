@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -356,19 +357,53 @@ export class UsersController {
     @Param('id') id: string,
     @CurrentUser() user: JwtPayload,
     @UploadedFile() file?: { filename: string; mimetype: string },
+    @Body() body?: { avatarUrl?: string },
   ): Promise<User> {
     // Users can only upload their own avatar
     if (user.id !== id) {
       throw new ForbiddenException('You can only upload your own avatar');
     }
 
-    if (!file) {
-      throw new HttpException('No file uploaded', HttpStatus.BAD_REQUEST);
+    let avatarPath: string;
+
+    if (body?.avatarUrl) {
+      // Accept a Cloudinary URL directly (from CDN service)
+      avatarPath = body.avatarUrl;
+    } else if (file) {
+      // Legacy: accept file upload
+      avatarPath = `/uploads/${file.filename}`;
+    } else {
+      throw new HttpException(
+        'No file or avatar URL provided',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
-    const avatarPath = `/uploads/${file.filename}`;
-
     const result = await this.usersService.uploadAvatar(id, avatarPath);
+
+    if (!result.isSuccess) {
+      switch (result.error) {
+        case ErrorsEnum.UserNotFound:
+          throw new HttpException(result.error, HttpStatus.NOT_FOUND);
+        default:
+          throw new HttpException(result.error, HttpStatus.BAD_REQUEST);
+      }
+    }
+
+    return result.value;
+  }
+
+  @Delete(':id/avatar')
+  @UseGuards(JwtAuthGuard)
+  async removeAvatar(
+    @Param('id') id: string,
+    @CurrentUser() user: JwtPayload,
+  ): Promise<User> {
+    if (user.id !== id) {
+      throw new ForbiddenException('You can only remove your own avatar');
+    }
+
+    const result = await this.usersService.uploadAvatar(id, null);
 
     if (!result.isSuccess) {
       switch (result.error) {

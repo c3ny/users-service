@@ -32,7 +32,7 @@ import { BloodstockRepository } from './adapters/out/bloodstock.repository';
       type: 'postgres',
       url: process.env.DATABASE_URL,
       entities: [Users, Donors, Companies],
-      synchronize: true,
+      synchronize: process.env.NODE_ENV !== 'production',
       ssl: process.env.DATABASE_URL?.includes('heroku')
         ? { rejectUnauthorized: false }
         : false,

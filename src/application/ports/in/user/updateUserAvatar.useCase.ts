@@ -8,7 +8,7 @@ import { ErrorsEnum } from '@/application/core/errors/errors.enum';
 
 export interface UpdateUserAvatarInput {
   userId: string;
-  avatarPath: string;
+  avatarPath: string | null;
 }
 
 @Injectable()
