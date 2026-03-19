@@ -184,7 +184,7 @@ export class UsersService {
 
   async uploadAvatar(
     userId: string,
-    avatarPath: string,
+    avatarPath: string | null,
   ): Promise<Result<User>> {
     const result = await this.updateUserAvatarUseCase.execute({
       userId,
