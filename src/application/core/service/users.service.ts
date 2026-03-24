@@ -17,6 +17,7 @@ import { UpdateUserAvatarUseCase } from '@/application/ports/in/user/updateUserA
 import { AuthenticateUserDto } from '@/adapters/in/dto/authenticate-user.dto';
 import { GetCompanyByUserIdUseCase } from '@/application/ports/in/company/getCompanyByUserId.useCase';
 import { BloodstockRepository } from '@/adapters/out/bloodstock.repository';
+import { sanitizeUser } from '../utils/sanitize-user.util';
 
 @Injectable()
 export class UsersService {
@@ -43,9 +44,7 @@ export class UsersService {
       return ResultFactory.failure(user.error);
     }
 
-    delete user.value.password;
-
-    return ResultFactory.success(user.value);
+    return ResultFactory.success(sanitizeUser(user.value));
   }
 
   async createUser(user: CreateUserRequest): Promise<Result<User>> {
@@ -107,9 +106,7 @@ export class UsersService {
       }
     }
 
-    delete result.value.password;
-
-    return ResultFactory.success(result.value);
+    return ResultFactory.success(sanitizeUser(result.value));
   }
 
   async authenticate(
@@ -141,7 +138,7 @@ export class UsersService {
       }
     }
 
-    delete findByEmail.value.password;
+    const safeUser = sanitizeUser(findByEmail.value);
 
     const token = this.generateJwtUseCase.execute(
       {
@@ -154,7 +151,7 @@ export class UsersService {
     );
 
     return ResultFactory.success({
-      user: findByEmail.value,
+      user: safeUser,
       token,
     });
   }
@@ -204,8 +201,6 @@ export class UsersService {
       return ResultFactory.failure(result.error);
     }
 
-    delete result.value.password;
-
-    return ResultFactory.success(result.value);
+    return ResultFactory.success(sanitizeUser(result.value));
   }
 }
