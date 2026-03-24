@@ -14,6 +14,7 @@ import {
   UseInterceptors,
   ForbiddenException,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { diskStorage } from 'multer';
@@ -106,6 +107,7 @@ export class UsersController {
   }
 
   @Post()
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @ApiOperation({
     summary: 'Create user (Register)',
     description:
@@ -267,6 +269,7 @@ export class UsersController {
   }
 
   @Post('authenticate')
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @ApiOperation({
     summary: 'Authenticate user (Login)',
     description:
@@ -292,13 +295,8 @@ export class UsersController {
     type: AuthResponseDto,
   })
   @ApiResponse({
-    status: 400,
-    description: 'Bad Request - Invalid password',
-    type: ErrorResponseDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'User not found',
+    status: 401,
+    description: 'Unauthorized - Invalid credentials',
     type: ErrorResponseDto,
   })
   async authenticate(
@@ -307,14 +305,7 @@ export class UsersController {
     const result = await this.usersService.authenticate(user);
 
     if (!result.isSuccess) {
-      switch (result.error) {
-        case ErrorsEnum.InvalidPassword:
-          throw new HttpException(result.error, HttpStatus.BAD_REQUEST);
-        case ErrorsEnum.UserNotFound:
-          throw new HttpException(result.error, HttpStatus.NOT_FOUND);
-        default:
-          throw new HttpException(result.error, HttpStatus.BAD_REQUEST);
-      }
+      throw new HttpException('Credenciais inválidas', HttpStatus.UNAUTHORIZED);
     }
 
     return result.value;

@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 import { UsersController } from './adapters/in/user.controller';
 import {
   COMPANY_REPOSITORY,
@@ -18,6 +20,7 @@ import { ChangeUserDataUseCase } from './application/ports/in/user/changeUserDat
 import { DonorRepository } from './adapters/out/donor.repository';
 import { Donors } from './adapters/out/domain/donor.entity';
 import { CreateDonorUseCase } from './application/ports/in/donor/createDonor.useCase';
+import { GetDonorByCpfUseCase } from './application/ports/in/donor/getDonorByCpf.useCase';
 import { Companies } from './adapters/out/domain/company.entity';
 import { CompanyRepository } from './adapters/out/company.repository';
 import { CreateCompanyUseCase } from './application/ports/in/company/createCompany.useCase';
@@ -28,14 +31,17 @@ import { BloodstockRepository } from './adapters/out/bloodstock.repository';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot([{ ttl: 60000, limit: 100 }]),
     TypeOrmModule.forRoot({
       type: 'postgres',
       url: process.env.DATABASE_URL,
       entities: [Users, Donors, Companies],
       synchronize: process.env.NODE_ENV !== 'production',
-      ssl: process.env.NODE_ENV === 'production' || process.env.DATABASE_SSL === 'true'
-        ? { rejectUnauthorized: false }
-        : false,
+      ssl:
+        process.env.NODE_ENV === 'production' ||
+        process.env.DATABASE_SSL === 'true'
+          ? { rejectUnauthorized: false }
+          : false,
     }),
     TypeOrmModule.forFeature([Users, Donors, Companies]),
     HashModule,
@@ -43,6 +49,7 @@ import { BloodstockRepository } from './adapters/out/bloodstock.repository';
   ],
   controllers: [UsersController],
   providers: [
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
     CreateUserUseCase,
     GetUserUseCase,
     GetUserByEmailUseCase,
@@ -50,6 +57,7 @@ import { BloodstockRepository } from './adapters/out/bloodstock.repository';
     ChangePasswordUseCase,
     ChangeUserDataUseCase,
     CreateDonorUseCase,
+    GetDonorByCpfUseCase,
     CreateCompanyUseCase,
     GetCompanyByUserIdUseCase,
     UpdateUserAvatarUseCase,

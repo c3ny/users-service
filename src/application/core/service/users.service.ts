@@ -9,6 +9,7 @@ import { CompareHashUseCase } from '@/modules/Hash/application/ports/in/compareH
 import { ChangePasswordUseCase } from '@/application/ports/in/user/changePassword.useCase';
 import { ErrorsEnum } from '../errors/errors.enum';
 import { CreateDonorUseCase } from '@/application/ports/in/donor/createDonor.useCase';
+import { GetDonorByCpfUseCase } from '@/application/ports/in/donor/getDonorByCpf.useCase';
 import { CreateUserRequest, PersonType } from '@/application/types/user.types';
 import { CreateCompanyUseCase } from '@/application/ports/in/company/createCompany.useCase';
 import { GenerateJwtUseCase } from '@/modules/Hash/application/ports/in/generateJwt.useCase';
@@ -27,6 +28,7 @@ export class UsersService {
     private readonly getUserByEmailUseCase: GetUserByEmailUseCase,
     private readonly changePasswordUseCase: ChangePasswordUseCase,
     private readonly createDonorUseCase: CreateDonorUseCase,
+    private readonly getDonorByCpfUseCase: GetDonorByCpfUseCase,
     private readonly createCompanyUseCase: CreateCompanyUseCase,
     private readonly generateJwtUseCase: GenerateJwtUseCase,
     private readonly updateUserAvatarUseCase: UpdateUserAvatarUseCase,
@@ -47,6 +49,13 @@ export class UsersService {
   }
 
   async createUser(user: CreateUserRequest): Promise<Result<User>> {
+    if (user.personType === PersonType.DONOR && user.cpf) {
+      const existingDonor = await this.getDonorByCpfUseCase.execute(user.cpf);
+      if (existingDonor) {
+        return ResultFactory.failure(ErrorsEnum.DonorAlreadyExists);
+      }
+    }
+
     const hashedPassword = this.hashStringUseCase.execute(user?.password ?? '');
 
     user.password = hashedPassword;

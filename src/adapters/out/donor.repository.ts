@@ -35,6 +35,10 @@ export class DonorRepository implements DonorRepositoryPort {
     await this.donorRepository.delete(id);
   }
 
+  findByCpf(cpf: string): Promise<Donor | null> {
+    return this.donorRepository.findOneBy({ cpf });
+  }
+
   async findByUserId(userId: string): Promise<Donor | null> {
     const donor = await this.donorRepository.findOneBy({
       fkUserId: userId,

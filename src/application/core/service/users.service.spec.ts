@@ -7,6 +7,7 @@ import { CompareHashUseCase } from '../../../modules/Hash/application/ports/in/c
 import { GetUserByEmailUseCase } from '../../ports/in/user/getUserByEmail.useCase';
 import { ChangePasswordUseCase } from '../../ports/in/user/changePassword.useCase';
 import { CreateDonorUseCase } from '../../ports/in/donor/createDonor.useCase';
+import { GetDonorByCpfUseCase } from '../../ports/in/donor/getDonorByCpf.useCase';
 import { CreateCompanyUseCase } from '../../ports/in/company/createCompany.useCase';
 import { User } from '../domain/user.entity';
 import { CreateUserRequest, PersonType } from '../../types/user.types';
@@ -26,6 +27,7 @@ describe('UsersService', () => {
   let getUserByEmailUseCase: jest.Mocked<GetUserByEmailUseCase>;
   let changePasswordUseCase: jest.Mocked<ChangePasswordUseCase>;
   let createDonorUseCase: jest.Mocked<CreateDonorUseCase>;
+  let getDonorByCpfUseCase: jest.Mocked<GetDonorByCpfUseCase>;
   let createCompanyUseCase: jest.Mocked<CreateCompanyUseCase>;
   let generateJwtUseCase: jest.Mocked<GenerateJwtUseCase>;
   let updateUserAvatarUseCase: jest.Mocked<UpdateUserAvatarUseCase>;
@@ -38,6 +40,7 @@ describe('UsersService', () => {
     const mockGetUserByEmailUseCase = createMockUseCase();
     const mockChangePasswordUseCase = createMockUseCase();
     const mockCreateDonorUseCase = createMockUseCase();
+    const mockGetDonorByCpfUseCase = createMockUseCase();
     const mockCreateCompanyUseCase = createMockUseCase();
     const mockGenerateJwtUseCase = createMockUseCase();
     const mockUpdateUserAvatarUseCase = createMockUseCase();
@@ -54,6 +57,7 @@ describe('UsersService', () => {
         { provide: GetUserByEmailUseCase, useValue: mockGetUserByEmailUseCase },
         { provide: ChangePasswordUseCase, useValue: mockChangePasswordUseCase },
         { provide: CreateDonorUseCase, useValue: mockCreateDonorUseCase },
+        { provide: GetDonorByCpfUseCase, useValue: mockGetDonorByCpfUseCase },
         { provide: CreateCompanyUseCase, useValue: mockCreateCompanyUseCase },
         { provide: GenerateJwtUseCase, useValue: mockGenerateJwtUseCase },
         {
@@ -77,6 +81,7 @@ describe('UsersService', () => {
     getUserByEmailUseCase = module.get(GetUserByEmailUseCase);
     changePasswordUseCase = module.get(ChangePasswordUseCase);
     createDonorUseCase = module.get(CreateDonorUseCase);
+    getDonorByCpfUseCase = module.get(GetDonorByCpfUseCase);
     createCompanyUseCase = module.get(CreateCompanyUseCase);
     generateJwtUseCase = module.get(GenerateJwtUseCase);
     updateUserAvatarUseCase = module.get(UpdateUserAvatarUseCase);
@@ -213,6 +218,7 @@ describe('UsersService', () => {
         personType: donorRequest.personType,
       };
 
+      getDonorByCpfUseCase.execute.mockResolvedValue(null);
       hashStringUseCase.execute.mockReturnValue(hashedPassword);
       createUserUseCase.execute.mockResolvedValue(
         ResultFactory.success(createdUser),
@@ -285,6 +291,20 @@ describe('UsersService', () => {
       });
     });
 
+    it('should return failure when donor CPF already exists', async () => {
+      getDonorByCpfUseCase.execute.mockResolvedValue({
+        id: 'existing-donor-id',
+        cpf: donorRequest.cpf,
+        fkUserId: 'some-user-id',
+      } as any);
+
+      const result = await service.createUser(donorRequest);
+
+      expect(result.isSuccess).toBe(false);
+      expect(result.error).toBe(ErrorsEnum.DonorAlreadyExists);
+      expect(createUserUseCase.execute).not.toHaveBeenCalled();
+    });
+
     it('should return partial success when user is created but donor creation fails', async () => {
       const hashedPassword = 'hashedPassword123';
       const createdUser: User = {
@@ -298,6 +318,7 @@ describe('UsersService', () => {
         personType: donorRequest.personType,
       };
 
+      getDonorByCpfUseCase.execute.mockResolvedValue(null);
       hashStringUseCase.execute.mockReturnValue(hashedPassword);
       createUserUseCase.execute.mockResolvedValue(
         ResultFactory.success(createdUser),
@@ -316,6 +337,7 @@ describe('UsersService', () => {
     it('should return failure when user creation fails', async () => {
       const hashedPassword = 'hashedPassword123';
 
+      getDonorByCpfUseCase.execute.mockResolvedValue(null);
       hashStringUseCase.execute.mockReturnValue(hashedPassword);
       createUserUseCase.execute.mockResolvedValue(
         ResultFactory.failure(ErrorsEnum.UserAlreadyExists),
@@ -342,6 +364,7 @@ describe('UsersService', () => {
         personType: invalidRequest.personType,
       };
 
+      getDonorByCpfUseCase.execute.mockResolvedValue(null);
       hashStringUseCase.execute.mockReturnValue(hashedPassword);
       createUserUseCase.execute.mockResolvedValue(
         ResultFactory.success(createdUser),

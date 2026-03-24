@@ -71,7 +71,10 @@ export class UsersRepository implements UserRepositoryPort {
     return this.usersRepository.save(userToUpdate);
   }
 
-  async updateAvatar(id: string, avatarPath: string | null): Promise<User | null> {
+  async updateAvatar(
+    id: string,
+    avatarPath: string | null,
+  ): Promise<User | null> {
     const user = await this.usersRepository.findOneBy({ id });
 
     if (!user) {
