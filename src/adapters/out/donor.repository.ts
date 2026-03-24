@@ -35,6 +35,11 @@ export class DonorRepository implements DonorRepositoryPort {
     await this.donorRepository.delete(id);
   }
 
+  async findByCpf(cpf: string): Promise<Donor | null> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (this.donorRepository as any).findOneBy({ cpf });
+  }
+
   async findByUserId(userId: string): Promise<Donor | null> {
     const donor = await this.donorRepository.findOneBy({
       fkUserId: userId,
