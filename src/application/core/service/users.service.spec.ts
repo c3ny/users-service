@@ -235,8 +235,9 @@ describe('UsersService', () => {
 
       const result = await service.createUser(donorRequest);
 
+      const { password: _, ...createdUserWithoutPassword } = createdUser;
       expect(result.isSuccess).toBe(true);
-      expect(result.value).toEqual(createdUser);
+      expect(result.value).toEqual(createdUserWithoutPassword);
       expect(hashStringUseCase.execute).toHaveBeenCalledWith(
         'plainPassword123',
       );
@@ -281,8 +282,9 @@ describe('UsersService', () => {
 
       const result = await service.createUser(companyRequest);
 
+      const { password: _, ...createdUserWithoutPassword } = createdUser;
       expect(result.isSuccess).toBe(true);
-      expect(result.value).toEqual(createdUser);
+      expect(result.value).toEqual(createdUserWithoutPassword);
       expect(createCompanyUseCase.execute).toHaveBeenCalledWith({
         cnpj: companyRequest.cnpj,
         institutionName: companyRequest.institutionName,
