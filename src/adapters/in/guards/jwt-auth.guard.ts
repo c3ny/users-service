@@ -11,6 +11,8 @@ export interface JwtPayload {
   id: string;
   email: string;
   personType: string;
+  companyId?: string | null;
+  isProfileComplete: boolean;
   iat?: number;
   exp?: number;
 }
@@ -27,7 +29,7 @@ export class JwtAuthGuard implements CanActivate {
 
     try {
       const payload = jwt.verify(token, this.getJwtSecret()) as JwtPayload;
-      if (!payload.id || !payload.email || !payload.personType) {
+      if (!payload.id || !payload.email) {
         throw new UnauthorizedException('Invalid token payload');
       }
 

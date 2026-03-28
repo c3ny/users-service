@@ -5,6 +5,8 @@ export interface UserRepositoryPort {
   save(user: Omit<User, 'id'>): Promise<Omit<User, 'password'>>;
   findById(id: string): Promise<User | null>;
   findByEmail(email: string): Promise<User | null>;
+  findByGoogleId(googleId: string): Promise<User | null>;
+  findByAppleId(appleId: string): Promise<User | null>;
   updatePassword(id: string, password: string): Promise<Users | null>;
   update(
     id: string,

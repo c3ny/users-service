@@ -8,4 +8,7 @@ export class User {
   zipcode?: string;
   personType: string;
   avatarPath?: string;
+  googleId?: string;
+  appleId?: string;
+  isProfileComplete: boolean;
 }

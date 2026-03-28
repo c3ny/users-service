@@ -13,12 +13,16 @@ export class UserMapper {
       zipcode: users.zipcode,
       personType: users.personType,
       avatarPath: users.avatarPath,
+      googleId: users.googleId,
+      appleId: users.appleId,
+      isProfileComplete: users.isProfileComplete ?? true,
     };
   }
 
   static toPersistence(user: User): Users {
     const users = new Users();
 
+    users.id = user.id;
     users.email = user.email;
     users.password = user.password;
     users.name = user.name;
@@ -27,6 +31,9 @@ export class UserMapper {
     users.zipcode = user.zipcode ?? '';
     users.personType = user.personType;
     users.avatarPath = user.avatarPath;
+    users.googleId = user.googleId;
+    users.appleId = user.appleId;
+    users.isProfileComplete = user.isProfileComplete ?? true;
 
     return users;
   }

@@ -4,6 +4,7 @@ export interface DonorRepositoryPort {
   save(donor: Omit<Donor, 'id'>): Promise<Donor>;
   findById(id: string): Promise<Donor | null>;
   findByCpf(cpf: string): Promise<Donor | null>;
+  findByUserId(userId: string): Promise<Donor | null>;
   update(donor: Donor): Promise<Donor>;
   delete(id: string): Promise<void>;
 }

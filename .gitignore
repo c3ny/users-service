@@ -9,3 +9,5 @@ dist/
 coverage
 .jest-cache
 /.claude
+# Claude Code
+CLAUDE.md

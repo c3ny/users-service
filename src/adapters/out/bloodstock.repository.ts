@@ -13,7 +13,10 @@ export class BloodstockRepository {
     try {
       const response = await fetch(`${this.bloodstockUrl}/api/stock/init`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-internal-secret': process.env.INTERNAL_SECRET ?? '',
+        },
         body: JSON.stringify(payload),
       });
 

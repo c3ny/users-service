@@ -8,6 +8,7 @@ import { GetUserByEmailUseCase } from '../../ports/in/user/getUserByEmail.useCas
 import { ChangePasswordUseCase } from '../../ports/in/user/changePassword.useCase';
 import { CreateDonorUseCase } from '../../ports/in/donor/createDonor.useCase';
 import { GetDonorByCpfUseCase } from '../../ports/in/donor/getDonorByCpf.useCase';
+import { GetDonorByUserIdUseCase } from '../../ports/in/donor/getDonorByUserId.useCase';
 import { CreateCompanyUseCase } from '../../ports/in/company/createCompany.useCase';
 import { User } from '../domain/user.entity';
 import { CreateUserRequest, PersonType } from '../../types/user.types';
@@ -18,6 +19,8 @@ import { GenerateJwtUseCase } from '../../../modules/Hash/application/ports/in/g
 import { GetCompanyByUserIdUseCase } from '../../ports/in/company/getCompanyByUserId.useCase';
 import { BloodstockRepository } from '../../../adapters/out/bloodstock.repository';
 import { UpdateUserAvatarUseCase } from '../../ports/in/user/updateUserAvatar.useCase';
+import { RegisterOAuthUserUseCase } from '../../ports/in/user/registerOAuthUser.useCase';
+import { ChangeUserDataUseCase } from '../../ports/in/user/changeUserData.useCase';
 describe('UsersService', () => {
   let service: UsersService;
   let getUserUseCase: jest.Mocked<GetUserUseCase>;
@@ -41,11 +44,14 @@ describe('UsersService', () => {
     const mockChangePasswordUseCase = createMockUseCase();
     const mockCreateDonorUseCase = createMockUseCase();
     const mockGetDonorByCpfUseCase = createMockUseCase();
+    const mockGetDonorByUserIdUseCase = createMockUseCase();
     const mockCreateCompanyUseCase = createMockUseCase();
     const mockGenerateJwtUseCase = createMockUseCase();
     const mockUpdateUserAvatarUseCase = createMockUseCase();
     const mockGetCompanyByUserIdUseCase = createMockUseCase();
     const mockBloodstockRepository = { initializeCompanyStock: jest.fn() };
+    const mockRegisterOAuthUserUseCase = createMockUseCase();
+    const mockChangeUserDataUseCase = createMockUseCase();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -58,6 +64,7 @@ describe('UsersService', () => {
         { provide: ChangePasswordUseCase, useValue: mockChangePasswordUseCase },
         { provide: CreateDonorUseCase, useValue: mockCreateDonorUseCase },
         { provide: GetDonorByCpfUseCase, useValue: mockGetDonorByCpfUseCase },
+        { provide: GetDonorByUserIdUseCase, useValue: mockGetDonorByUserIdUseCase },
         { provide: CreateCompanyUseCase, useValue: mockCreateCompanyUseCase },
         { provide: GenerateJwtUseCase, useValue: mockGenerateJwtUseCase },
         {
@@ -70,6 +77,8 @@ describe('UsersService', () => {
           useValue: mockGetCompanyByUserIdUseCase,
         },
         { provide: BloodstockRepository, useValue: mockBloodstockRepository },
+        { provide: RegisterOAuthUserUseCase, useValue: mockRegisterOAuthUserUseCase },
+        { provide: ChangeUserDataUseCase, useValue: mockChangeUserDataUseCase },
       ],
     }).compile();
 
@@ -244,6 +253,7 @@ describe('UsersService', () => {
       expect(createUserUseCase.execute).toHaveBeenCalledWith({
         ...donorRequest,
         password: hashedPassword,
+        isProfileComplete: true,
       });
       expect(createDonorUseCase.execute).toHaveBeenCalledWith({
         cpf: donorRequest.cpf,
@@ -393,6 +403,7 @@ describe('UsersService', () => {
       city: 'São Paulo',
       uf: 'SP',
       personType: 'DONOR',
+      isProfileComplete: true,
     };
 
     it('should authenticate user successfully with correct credentials', async () => {
@@ -427,6 +438,7 @@ describe('UsersService', () => {
           id: mockUser.id,
           personType: mockUser.personType,
           companyId: null,
+          isProfileComplete: true,
         },
         '1h',
       );

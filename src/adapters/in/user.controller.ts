@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  Patch,
   Res,
   UploadedFile,
   UseGuards,
@@ -44,6 +45,9 @@ import {
   ErrorResponseDto,
 } from './dto/user-response.dto';
 import { AuthenticateUserDto } from './dto/authenticate-user.dto';
+import { OAuthGoogleDto, OAuthAppleDto } from './dto/oauth-user.dto';
+import { CompleteProfileDto } from './dto/complete-profile.dto';
+import * as appleSignin from 'apple-signin-auth';
 
 @ApiTags('Users')
 @Controller('/users')
@@ -382,6 +386,164 @@ export class UsersController {
     }
 
     return result.value;
+  }
+
+  @Patch(':id/complete-profile')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Complete OAuth user profile',
+    description:
+      'Complete the profile of a user who signed in via OAuth by providing donor or company details.',
+  })
+  @ApiBearerAuth('JWT-auth')
+  @ApiResponse({
+    status: 200,
+    description: 'Profile completed and new token issued',
+    type: AuthResponseDto,
+  })
+  async completeProfile(
+    @Param('id') id: string,
+    @Body() body: CompleteProfileDto,
+    @CurrentUser() user: JwtPayload,
+  ): Promise<{ user: User; token: string }> {
+    if (user.id !== id) {
+      throw new ForbiddenException('You can only complete your own profile');
+    }
+
+    const result = await this.usersService.completeProfile(id, body);
+
+    if (!result.isSuccess) {
+      throw new HttpException(
+        result.error ?? 'Profile completion failed',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return result.value;
+  }
+
+  @Post('oauth/google')
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
+  @ApiOperation({
+    summary: 'Authenticate with Google',
+    description:
+      'Authenticate or register a user using a Google OAuth access token.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Authenticated successfully',
+    type: AuthResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Invalid Google token',
+    type: ErrorResponseDto,
+  })
+  async authenticateGoogle(
+    @Body() body: OAuthGoogleDto,
+  ): Promise<{ user: User; token: string }> {
+    try {
+      const response = await fetch(
+        `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${encodeURIComponent(body.accessToken)}`,
+      );
+
+      if (!response.ok) {
+        throw new HttpException(
+          'Invalid Google access token',
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+
+      const googleUser = (await response.json()) as {
+        sub: string;
+        email: string;
+        name?: string;
+      };
+
+      if (!googleUser.sub || !googleUser.email) {
+        throw new HttpException(
+          'Invalid Google token payload',
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+
+      const result = await this.usersService.authenticateOAuth({
+        provider: 'google',
+        providerId: googleUser.sub,
+        email: googleUser.email,
+        name: googleUser.name ?? googleUser.email,
+      });
+
+      if (!result.isSuccess) {
+        throw new HttpException(
+          'OAuth authentication failed',
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+
+      return result.value;
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw new HttpException('Invalid Google token', HttpStatus.UNAUTHORIZED);
+    }
+  }
+
+  @Post('oauth/apple')
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
+  @ApiOperation({
+    summary: 'Authenticate with Apple',
+    description:
+      'Authenticate or register a user using an Apple identity token.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Authenticated successfully',
+    type: AuthResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Invalid Apple token',
+    type: ErrorResponseDto,
+  })
+  async authenticateApple(
+    @Body() body: OAuthAppleDto,
+  ): Promise<{ user: User; token: string }> {
+    try {
+      const applePayload = await appleSignin.verifyIdToken(body.idToken, {
+        audience: process.env.APPLE_CLIENT_ID,
+        ignoreExpiration: false,
+      });
+
+      if (!applePayload?.sub || !applePayload?.email) {
+        throw new HttpException(
+          'Invalid Apple token payload',
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+
+      const name = body.firstName
+        ? `${body.firstName}${body.lastName ? ' ' + body.lastName : ''}`
+        : applePayload.email;
+
+      const result = await this.usersService.authenticateOAuth({
+        provider: 'apple',
+        providerId: applePayload.sub,
+        email: applePayload.email,
+        name,
+      });
+
+      if (!result.isSuccess) {
+        throw new HttpException(
+          'OAuth authentication failed',
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+
+      return result.value;
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw new HttpException('Invalid Apple token', HttpStatus.UNAUTHORIZED);
+    }
   }
 
   @Delete(':id/avatar')
