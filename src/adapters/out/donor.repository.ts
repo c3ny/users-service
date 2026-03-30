@@ -40,14 +40,21 @@ export class DonorRepository implements DonorRepositoryPort {
   }
 
   async findByUserId(userId: string): Promise<Donor | null> {
-    const donor = await this.donorRepository.findOneBy({
-      fkUserId: userId,
-    });
+    const donor = await this.donorRepository
+      .createQueryBuilder('donor')
+      .where('donor.fk_user_id = :userId', { userId })
+      .getOne();
 
     if (!donor) {
       return null;
     }
 
-    return DonorMapper.toDomain(donor);
+    return {
+      id: donor.id,
+      cpf: donor.cpf,
+      bloodType: donor.bloodType ?? '',
+      birthDate: donor.birthDate ?? new Date(),
+      fkUserId: userId,
+    };
   }
 }

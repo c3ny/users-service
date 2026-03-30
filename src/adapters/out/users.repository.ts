@@ -41,6 +41,26 @@ export class UsersRepository implements UserRepositoryPort {
     return UserMapper.toDomain(user);
   }
 
+  async findByGoogleId(googleId: string): Promise<User | null> {
+    const user = await this.usersRepository.findOneBy({ googleId });
+
+    if (!user) {
+      return null;
+    }
+
+    return UserMapper.toDomain(user);
+  }
+
+  async findByAppleId(appleId: string): Promise<User | null> {
+    const user = await this.usersRepository.findOneBy({ appleId });
+
+    if (!user) {
+      return null;
+    }
+
+    return UserMapper.toDomain(user);
+  }
+
   async updatePassword(id: string, password: string): Promise<Users | null> {
     const user = await this.usersRepository.findOneBy({ id });
 

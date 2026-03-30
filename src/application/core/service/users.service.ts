@@ -10,6 +10,13 @@ import { ChangePasswordUseCase } from '@/application/ports/in/user/changePasswor
 import { ErrorsEnum } from '../errors/errors.enum';
 import { CreateDonorUseCase } from '@/application/ports/in/donor/createDonor.useCase';
 import { GetDonorByCpfUseCase } from '@/application/ports/in/donor/getDonorByCpf.useCase';
+import { GetDonorByUserIdUseCase } from '@/application/ports/in/donor/getDonorByUserId.useCase';
+import {
+  RegisterOAuthUserUseCase,
+  RegisterOAuthUserInput,
+} from '@/application/ports/in/user/registerOAuthUser.useCase';
+import { ChangeUserDataUseCase } from '@/application/ports/in/user/changeUserData.useCase';
+import { CompleteProfileDto } from '@/adapters/in/dto/complete-profile.dto';
 import { CreateUserRequest, PersonType } from '@/application/types/user.types';
 import { CreateCompanyUseCase } from '@/application/ports/in/company/createCompany.useCase';
 import { GenerateJwtUseCase } from '@/modules/Hash/application/ports/in/generateJwt.useCase';
@@ -30,11 +37,14 @@ export class UsersService {
     private readonly changePasswordUseCase: ChangePasswordUseCase,
     private readonly createDonorUseCase: CreateDonorUseCase,
     private readonly getDonorByCpfUseCase: GetDonorByCpfUseCase,
+    private readonly getDonorByUserIdUseCase: GetDonorByUserIdUseCase,
     private readonly createCompanyUseCase: CreateCompanyUseCase,
     private readonly generateJwtUseCase: GenerateJwtUseCase,
     private readonly updateUserAvatarUseCase: UpdateUserAvatarUseCase,
     private readonly getCompanyByUserIdUseCase: GetCompanyByUserIdUseCase,
     private readonly bloodstockRepository: BloodstockRepository,
+    private readonly registerOAuthUserUseCase: RegisterOAuthUserUseCase,
+    private readonly changeUserDataUseCase: ChangeUserDataUseCase,
   ) {}
 
   async getUserById(id: string): Promise<Result<User>> {
@@ -59,7 +69,10 @@ export class UsersService {
 
     user.password = hashedPassword;
 
-    const result = await this.createUserUseCase.execute(user);
+    const result = await this.createUserUseCase.execute({
+      ...user,
+      isProfileComplete: true,
+    });
 
     if (!result.isSuccess) {
       return ResultFactory.failure(result.error);
@@ -145,7 +158,8 @@ export class UsersService {
         id: findByEmail.value.id,
         email: findByEmail.value.email,
         personType: findByEmail.value.personType,
-        companyId, // ← agora entra no token
+        companyId,
+        isProfileComplete: findByEmail.value.isProfileComplete ?? true,
       },
       user.rememberMe ? '30d' : '1h',
     );
@@ -186,6 +200,130 @@ export class UsersService {
     }
 
     return ResultFactory.success(result.value);
+  }
+
+  async authenticateOAuth(
+    input: RegisterOAuthUserInput,
+  ): Promise<Result<{ user: User; token: string }>> {
+    const result = await this.registerOAuthUserUseCase.execute(input);
+
+    if (!result.isSuccess) {
+      return ResultFactory.failure(result.error);
+    }
+
+    const user = result.value;
+
+    let companyId: string | null = null;
+    if (user.personType === 'COMPANY') {
+      const companyResult = await this.getCompanyByUserIdUseCase.execute(
+        user.id,
+      );
+      if (companyResult.isSuccess) {
+        companyId = companyResult.value.id;
+      }
+    }
+
+    const token = this.generateJwtUseCase.execute({
+      id: user.id,
+      email: user.email,
+      personType: user.personType,
+      companyId,
+      isProfileComplete: user.isProfileComplete,
+    });
+
+    return ResultFactory.success({ user: sanitizeUser(user), token });
+  }
+
+  async completeProfile(
+    userId: string,
+    data: CompleteProfileDto,
+  ): Promise<Result<{ user: User; token: string }>> {
+    const getUser = await this.getUserUseCase.execute(userId);
+
+    if (!getUser.isSuccess) {
+      return ResultFactory.failure(getUser.error);
+    }
+
+    const existingUser = getUser.value;
+
+    // Create donor or company profile
+    switch (data.personType) {
+      case PersonType.DONOR: {
+        const existingDonor =
+          await this.getDonorByUserIdUseCase.execute(userId);
+        if (!existingDonor) {
+          const donor = await this.createDonorUseCase.execute({
+            cpf: data.cpf ?? '',
+            bloodType: data.bloodType ?? '',
+            birthDate: data.birthDate ? new Date(data.birthDate) : new Date(),
+            fkUserId: userId,
+          });
+          if (!donor.isSuccess) {
+            return ResultFactory.failure(donor.error);
+          }
+        }
+        break;
+      }
+      case PersonType.COMPANY: {
+        const company = await this.createCompanyUseCase.execute({
+          cnpj: data.cnpj ?? '',
+          institutionName: data.institutionName ?? '',
+          cnes: data.cnes ?? '',
+          fkUserId: userId,
+        });
+        if (!company.isSuccess) {
+          return ResultFactory.failure(company.error);
+        }
+        await this.bloodstockRepository.initializeCompanyStock({
+          companyId: company.value.id,
+          cnpj: data.cnpj ?? '',
+          cnes: data.cnes ?? '',
+          institutionName: data.institutionName ?? '',
+        });
+        break;
+      }
+    }
+
+    // Update user fields
+    const updated = await this.changeUserDataUseCase.execute({
+      id: userId,
+      user: {
+        ...existingUser,
+        city: data.city,
+        uf: data.uf,
+        personType: data.personType,
+        isProfileComplete: true,
+      },
+    });
+
+    if (!updated.isSuccess) {
+      return ResultFactory.failure(updated.error);
+    }
+
+    let companyId: string | null = null;
+    if (data.personType === PersonType.COMPANY) {
+      const companyResult =
+        await this.getCompanyByUserIdUseCase.execute(userId);
+      if (companyResult.isSuccess) {
+        companyId = companyResult.value.id;
+      }
+    }
+
+    const token = this.generateJwtUseCase.execute({
+      id: userId,
+      email: existingUser.email,
+      personType: data.personType,
+      companyId,
+      isProfileComplete: true,
+    });
+
+    const safeUser = sanitizeUser({
+      ...existingUser,
+      ...updated.value,
+      isProfileComplete: true,
+    });
+
+    return ResultFactory.success({ user: safeUser, token });
   }
 
   async uploadAvatar(

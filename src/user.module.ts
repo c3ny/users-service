@@ -21,10 +21,12 @@ import { DonorRepository } from './adapters/out/donor.repository';
 import { Donors } from './adapters/out/domain/donor.entity';
 import { CreateDonorUseCase } from './application/ports/in/donor/createDonor.useCase';
 import { GetDonorByCpfUseCase } from './application/ports/in/donor/getDonorByCpf.useCase';
+import { GetDonorByUserIdUseCase } from './application/ports/in/donor/getDonorByUserId.useCase';
 import { Companies } from './adapters/out/domain/company.entity';
 import { CompanyRepository } from './adapters/out/company.repository';
 import { CreateCompanyUseCase } from './application/ports/in/company/createCompany.useCase';
 import { UpdateUserAvatarUseCase } from './application/ports/in/user/updateUserAvatar.useCase';
+import { RegisterOAuthUserUseCase } from './application/ports/in/user/registerOAuthUser.useCase';
 import { HealthModule } from './modules/Health/health.module';
 import { GetCompanyByUserIdUseCase } from './application/ports/in/company/getCompanyByUserId.useCase';
 import { BloodstockRepository } from './adapters/out/bloodstock.repository';
@@ -58,9 +60,12 @@ import { BloodstockRepository } from './adapters/out/bloodstock.repository';
     ChangeUserDataUseCase,
     CreateDonorUseCase,
     GetDonorByCpfUseCase,
+    GetDonorByUserIdUseCase,
     CreateCompanyUseCase,
     GetCompanyByUserIdUseCase,
     UpdateUserAvatarUseCase,
+    RegisterOAuthUserUseCase,
+    ChangeUserDataUseCase,
     BloodstockRepository,
     { provide: USERS_REPOSITORY, useClass: UsersRepository },
     { provide: DONOR_REPOSITORY, useClass: DonorRepository },
