@@ -31,6 +31,7 @@ import {
 import { User } from '@/application/core/domain/user.entity';
 import { ErrorsEnum } from '@/application/core/errors/errors.enum';
 import { UsersService } from '@/application/core/service/users.service';
+import { AppLoggerService } from '@/shared/logger/app-logger.service';
 import { CreateUserRequest } from '@/application/types/user.types';
 import { JwtAuthGuard, JwtPayload } from './guards/jwt-auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
@@ -52,7 +53,10 @@ import * as appleSignin from 'apple-signin-auth';
 @ApiTags('Users')
 @Controller('/users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly logger: AppLoggerService,
+  ) {}
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
@@ -484,6 +488,9 @@ export class UsersController {
       return result.value;
     } catch (error) {
       if (error instanceof HttpException) throw error;
+      this.logger.error('Google OAuth failed', {
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw new HttpException('Invalid Google token', HttpStatus.UNAUTHORIZED);
     }
   }
@@ -542,6 +549,9 @@ export class UsersController {
       return result.value;
     } catch (error) {
       if (error instanceof HttpException) throw error;
+      this.logger.error('Apple OAuth failed', {
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw new HttpException('Invalid Apple token', HttpStatus.UNAUTHORIZED);
     }
   }

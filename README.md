@@ -452,19 +452,19 @@ Após instalar as dependências, rode o projeto dependendo do seu contexto/crit�
 Desenvolvimento
 
 ```bash
-npm start:dev
+npm run start:dev
 ```
 
 Rodar sem necessidade de verificar alteração de arquivos:
 
 ```bash
-npm start
+npm run start
 ```
 
 Rodar a versão de PROD
 
 ```bash
-npm start:prod
+npm run start:prod
 ```
 
 ## Run tests
@@ -482,6 +482,8 @@ $ npm run test:cov
 
 ### Desenvolvedores
 
-Este projeto foi desenvolvido pelo grupo de estudantes da FATEC Votorantim, presentes atualmente no 3o semestre de Desenvolvimento de Software Multiplataforma.
+Este projeto foi desenvolvido por estudantes da FATEC Votorantim, cursando Desenvolvimento de Sistemas Multiplataforma.
+
+[Caio Cesar Martins de Lima](https://github.com/FireC4io) - Desenvolvedor Full Stack | NestJS, Next.js, Node.js, TypeScript.
 
 [Ysrael Moreno](https://github.com/ysraelmoreno) - Desenvolvedor Full Stack | Android, React, NextJS, NodeJS.

@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { AppLoggerService } from './shared/logger/app-logger.service';
+import { HttpLoggingInterceptor } from './shared/interceptors/http-logging.interceptor';
+import { AllExceptionsFilter } from './shared/filters/all-exceptions.filter';
 import { UsersController } from './adapters/in/user.controller';
 import {
   COMPANY_REPOSITORY,
@@ -52,6 +55,9 @@ import { BloodstockRepository } from './adapters/out/bloodstock.repository';
   controllers: [UsersController],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },
+    { provide: AppLoggerService, useFactory: () => new AppLoggerService('users-service') },
+    { provide: APP_INTERCEPTOR, useClass: HttpLoggingInterceptor },
+    { provide: APP_FILTER, useClass: AllExceptionsFilter },
     CreateUserUseCase,
     GetUserUseCase,
     GetUserByEmailUseCase,

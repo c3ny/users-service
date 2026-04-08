@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { AppLoggerService } from '@/shared/logger/app-logger.service';
 import { GetUserUseCase } from '@/application/ports/in/user/getUser.useCase';
 import { User } from '../domain/user.entity';
 import { Result, ResultFactory } from '@/application/types/result.types';
@@ -29,6 +30,7 @@ import { sanitizeUser } from '../utils/sanitize-user.util';
 @Injectable()
 export class UsersService {
   constructor(
+    private readonly logger: AppLoggerService,
     private readonly getUserUseCase: GetUserUseCase,
     private readonly createUserUseCase: CreateUserUseCase,
     private readonly hashStringUseCase: HashStringUseCase,
@@ -119,6 +121,11 @@ export class UsersService {
       }
     }
 
+    this.logger.info('User created successfully', {
+      userId: result.value.id,
+      personType: user.personType,
+    });
+
     return ResultFactory.success(sanitizeUser(result.value));
   }
 
@@ -164,11 +171,17 @@ export class UsersService {
       user.rememberMe ? '30d' : '1h',
     );
 
+    this.logger.info('User authenticated', {
+      userId: findByEmail.value.id,
+      personType: findByEmail.value.personType,
+    });
+
     return ResultFactory.success({
       user: safeUser,
       token,
     });
   }
+
   async changePassword(
     id: string,
     passwords: { old: string; new: string },
@@ -198,6 +211,8 @@ export class UsersService {
     if (!result.isSuccess) {
       return ResultFactory.failure(result.error);
     }
+
+    this.logger.info('Password changed successfully', { userId: id });
 
     return ResultFactory.success(result.value);
   }
@@ -229,6 +244,12 @@ export class UsersService {
       personType: user.personType,
       companyId,
       isProfileComplete: user.isProfileComplete,
+    });
+
+    this.logger.info('OAuth user authenticated', {
+      userId: user.id,
+      provider: input.provider,
+      personType: user.personType,
     });
 
     return ResultFactory.success({ user: sanitizeUser(user), token });
@@ -322,6 +343,8 @@ export class UsersService {
       ...updated.value,
       isProfileComplete: true,
     });
+
+    this.logger.info('Profile completed', { userId, personType: data.personType });
 
     return ResultFactory.success({ user: safeUser, token });
   }
