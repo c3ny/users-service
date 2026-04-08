@@ -21,6 +21,7 @@ import { BloodstockRepository } from '../../../adapters/out/bloodstock.repositor
 import { UpdateUserAvatarUseCase } from '../../ports/in/user/updateUserAvatar.useCase';
 import { RegisterOAuthUserUseCase } from '../../ports/in/user/registerOAuthUser.useCase';
 import { ChangeUserDataUseCase } from '../../ports/in/user/changeUserData.useCase';
+import { AppLoggerService } from '../../../shared/logger/app-logger.service';
 describe('UsersService', () => {
   let service: UsersService;
   let getUserUseCase: jest.Mocked<GetUserUseCase>;
@@ -53,9 +54,17 @@ describe('UsersService', () => {
     const mockRegisterOAuthUserUseCase = createMockUseCase();
     const mockChangeUserDataUseCase = createMockUseCase();
 
+    const mockAppLoggerService = {
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+      debug: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
+        { provide: AppLoggerService, useValue: mockAppLoggerService },
         { provide: GetUserUseCase, useValue: mockGetUserUseCase },
         { provide: CreateUserUseCase, useValue: mockCreateUserUseCase },
         { provide: HashStringUseCase, useValue: mockHashStringUseCase },
