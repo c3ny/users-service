@@ -414,6 +414,204 @@ npm run test:e2e
 - Para debugging, configure breakpoints nos Use Cases
 - Monitore as queries do banco através do TypeORM logging
 
+---
+
+## Docker
+
+### Dockerfile
+
+O projeto utiliza um **Dockerfile multi-stage** com duas etapas:
+
+1. **Builder** (`node:22-alpine`): instala todas as dependências e compila o TypeScript
+2. **Production** (`node:22-alpine`): copia apenas as dependências de produção e o `dist/` compilado
+
+### Comandos Docker
+
+```bash
+# Gerar a imagem Docker do backend
+docker build -t users-service .
+
+# Criar e executar o container
+docker run -d \
+  --name users-service \
+  -p 3002:3002 \
+  -e DATABASE_URL=postgres://postgres:postgres@host.docker.internal:5432/users \
+  -e JWT_SECRET=secret \
+  -e NODE_ENV=production \
+  -e DATABASE_SSL=false \
+  users-service
+
+# Verificar se o container está rodando
+docker ps
+
+# Ver logs do container
+docker logs users-service
+
+# Parar o container
+docker stop users-service
+
+# Remover o container
+docker rm users-service
+```
+
+### Docker Compose (todos os servicos)
+
+Na raiz do projeto existe um `docker-compose.yml` que sobe todos os microsservicos juntos:
+
+```bash
+# Subir todos os servicos
+docker compose up -d
+
+# Subir apenas o users-service
+docker compose up -d users-service
+
+# Rebuild apos alteracoes no codigo
+docker compose up -d --build users-service
+
+# Ver logs em tempo real
+docker compose logs -f users-service
+```
+
+### CI — Docker no Pipeline
+
+O pipeline CI (`ci.yaml`) inclui um step de build da imagem Docker para validar que o Dockerfile compila corretamente a cada push:
+
+```yaml
+- name: Build Docker image
+  run: docker build -t ${{ github.repository }}:ci-${{ github.sha }} .
+```
+
+---
+
+## Observabilidade — Sistema de Logging Estruturado
+
+O sistema de observabilidade e composto por **3 classes** em `src/shared/`, replicadas em todos os microsservicos NestJS do projeto.
+
+### Arquitetura dos Logs
+
+```
+Cliente HTTP
+    |
+    v
+[HttpLoggingInterceptor]  -->  log "Incoming request" (method, path, body, ip, headers...)
+    |
+    v
+Controller -> Service -> Use Case -> Repository
+    |
+    v
+[HttpLoggingInterceptor]  -->  log "Request completed" (statusCode, durationMs)
+    |
+    v
+Resposta ao cliente
+
+Se ocorrer excecao nao tratada:
+    |
+    v
+[AllExceptionsFilter]  -->  log "Unhandled exception" (error, stack trace)
+    |
+    v
+Resposta padronizada de erro (JSON)
+```
+
+### 1. `AppLoggerService` — Classe generica de logging (`src/shared/logger/app-logger.service.ts`)
+
+Encapsula a biblioteca **Pino** (logger de alta performance para Node.js) e decide automaticamente o destino dos logs com base no ambiente:
+
+| Ambiente | Comportamento |
+|---|---|
+| Desenvolvimento (`NODE_ENV !== 'production'`) | Saida colorida no terminal via `pino-pretty` |
+| Producao com `BETTERSTACK_SOURCE_TOKEN` | Envia logs via HTTP para o BetterStack usando `@logtail/pino` |
+| Producao sem token | JSON puro no `stdout` (fallback seguro) |
+
+**Seguranca:** Campos sensiveis como `password`, `token`, `authorization` e `cookie` sao automaticamente substituidos por `[REDACTED]` antes de serem logados, via configuracao `redact` do Pino.
+
+**Todos os logs sao estruturados em JSON**, contendo automaticamente:
+- `service`: nome do microsservico (ex: `"users-service"`)
+- `timestamp`: formato ISO 8601
+- `level`: nivel do log (`info`, `warn`, `error`, `debug`)
+
+A classe expoe 4 metodos: `info()`, `warn()`, `error()`, `debug()` — cada um aceita uma mensagem e metadados opcionais.
+
+### 2. `HttpLoggingInterceptor` — Interceptor de requisicoes (`src/shared/interceptors/http-logging.interceptor.ts`)
+
+NestJS Interceptor registrado globalmente via `APP_INTERCEPTOR`. Executado automaticamente em **toda requisicao HTTP** sem precisar decorar cada controller.
+
+**Na chegada da requisicao** — gera um `requestId` unico (UUID v4) e loga:
+- Metodo HTTP, URL, parametros, query string, body
+- IP do cliente, User-Agent, header Origin
+
+**Na resposta** — loga:
+- Status code HTTP
+- `durationMs`: tempo de processamento em milissegundos
+- Mesmo `requestId` para correlacao
+
+**Em caso de erro** — loga com nivel `error` incluindo a mensagem do erro.
+
+O `requestId` e setado no header `X-Request-Id` da resposta, permitindo rastreabilidade ponta a ponta.
+
+### 3. `AllExceptionsFilter` — Filtro de excecoes (`src/shared/filters/all-exceptions.filter.ts`)
+
+NestJS Exception Filter global (`APP_FILTER`) que captura **qualquer excecao nao tratada**. Garante que erros inesperados sejam registrados com contexto completo (metodo, URL, status, erro, stack trace) antes de retornar uma resposta JSON padronizada ao cliente.
+
+### Registro no modulo
+
+As 3 classes sao registradas no modulo raiz do servico (`user.module.ts`):
+
+```typescript
+providers: [
+  { provide: AppLoggerService, useFactory: () => new AppLoggerService('users-service') },
+  { provide: APP_INTERCEPTOR, useClass: HttpLoggingInterceptor },
+  { provide: APP_FILTER, useClass: AllExceptionsFilter },
+]
+```
+
+### Logs estrategicos
+
+Alem do logging automatico de requests/responses, foram adicionados logs `info` em pontos estrategicos do codigo:
+- `authenticate` — login de usuario
+- `createUser` — registro de novo usuario
+- `changePassword` — alteracao de senha
+- `completeProfile` — completar perfil OAuth
+- `authenticateOAuth` — login via Google/Apple
+
+E logs `error` nos blocos `catch` do controller (ex: falha de autenticacao OAuth).
+
+### BetterStack — Plataforma de monitoramento
+
+Os logs sao enviados para o **BetterStack** onde temos:
+
+**Dashboard** com graficos de:
+- Volume de requests por servico
+- Taxa de erros (4xx/5xx)
+- Latencia media por servico
+- Top endpoints mais acessados
+
+**3 alertas configurados:**
+
+| Alerta | Condicao | Threshold |
+|---|---|---|
+| Alta taxa de erros | `statusCode:401 OR statusCode:500` | >= 10 ocorrencias em 1 minuto |
+| Pico de requisicoes | `message:"Incoming request"` | >= 100 requisicoes em 1 minuto |
+| Lentidao | `durationMs:>1000` | >= 1 ocorrencia em 1 minuto |
+
+### Prints do BetterStack
+
+#### Logs recebidos no BetterStack
+
+<!-- Inserir print dos logs estruturados chegando no BetterStack -->
+
+#### Dashboard de monitoramento
+
+<!-- Inserir print do dashboard com graficos -->
+
+#### Alertas configurados
+
+<!-- Inserir print da tela de alertas configurados -->
+
+#### Notificacao de alerta recebida por e-mail
+
+<!-- Inserir print do e-mail de alerta recebido -->
+
 ### Estrutura de Testes
 
 ```

@@ -39,6 +39,9 @@ jobs:
       - name: Test coverage
         run: npm run test:cov
 
+      - name: Build Docker image
+        run: docker build -t ${{ github.repository }}:ci-${{ github.sha }} .
+
       - name: Enviar email em caso de falha
         if: failure()
         uses: dawidd6/action-send-mail@v3

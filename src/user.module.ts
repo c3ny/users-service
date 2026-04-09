@@ -43,8 +43,9 @@ import { BloodstockRepository } from './adapters/out/bloodstock.repository';
       entities: [Users, Donors, Companies],
       synchronize: process.env.NODE_ENV !== 'production',
       ssl:
-        process.env.NODE_ENV === 'production' ||
-        process.env.DATABASE_SSL === 'true'
+        process.env.DATABASE_SSL === 'false'
+          ? false
+          : process.env.NODE_ENV === 'production' || process.env.DATABASE_SSL === 'true'
           ? { rejectUnauthorized: false }
           : false,
     }),
