@@ -598,19 +598,45 @@ Os logs sao enviados para o **BetterStack** onde temos:
 
 #### Logs recebidos no BetterStack
 
-<!-- Inserir print dos logs estruturados chegando no BetterStack -->
+Logs JSON estruturados chegando em tempo real no Live Tail do BetterStack, com campos `service`, `method`, `path`, `statusCode` e `durationMs`:
+
+![Logs no BetterStack](docs/betterstack/logs.png)
 
 #### Dashboard de monitoramento
 
-<!-- Inserir print do dashboard com graficos -->
+Dashboard com grafico de volume de requests por servico:
 
-#### Alertas configurados
+![Dashboard BetterStack](docs/betterstack/dashboard.png)
 
-<!-- Inserir print da tela de alertas configurados -->
+#### Alerta: Alta taxa de erros (500/401)
 
-#### Notificacao de alerta recebida por e-mail
+Alerta disparado quando erros 500 ou 401 atingem 10 ocorrencias em 1 minuto:
 
-<!-- Inserir print do e-mail de alerta recebido -->
+![Alerta erro 500](docs/betterstack/erro%20500.png)
+
+E-mail de notificacao recebido:
+
+![Email alerta erro 500](docs/betterstack/erro%20500%20alerta%20email.png)
+
+#### Alerta: Lentidao de response
+
+Alerta disparado quando responses demoram mais que 1 segundo:
+
+![Alerta lentidao](docs/betterstack/erro%20lentidao.png)
+
+E-mail de notificacao recebido:
+
+![Email alerta lentidao](docs/betterstack/erro%20lentidao%20email.png)
+
+#### Alerta: Pico de requisicoes
+
+Alerta disparado quando atingem 100 requisicoes em 1 minuto:
+
+![Alerta pico](docs/betterstack/erro%20pico.png)
+
+E-mail de notificacao recebido:
+
+![Email alerta pico](docs/betterstack/erro%20pico%20email.png)
 
 ### Estrutura de Testes
 
