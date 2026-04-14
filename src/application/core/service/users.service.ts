@@ -26,6 +26,10 @@ import { AuthenticateUserDto } from '@/adapters/in/dto/authenticate-user.dto';
 import { GetCompanyByUserIdUseCase } from '@/application/ports/in/company/getCompanyByUserId.useCase';
 import { BloodstockRepository } from '@/adapters/out/bloodstock.repository';
 import { sanitizeUser } from '../utils/sanitize-user.util';
+import { generateUniqueSlug } from '../utils/slug.util';
+import { CompanyRepositoryPort } from '@/application/ports/out/company-repository.port';
+import { Inject } from '@nestjs/common';
+import { COMPANY_REPOSITORY } from '@/constants';
 
 @Injectable()
 export class UsersService {
@@ -47,6 +51,8 @@ export class UsersService {
     private readonly bloodstockRepository: BloodstockRepository,
     private readonly registerOAuthUserUseCase: RegisterOAuthUserUseCase,
     private readonly changeUserDataUseCase: ChangeUserDataUseCase,
+    @Inject(COMPANY_REPOSITORY)
+    private readonly companyRepository: CompanyRepositoryPort,
   ) {}
 
   async getUserById(id: string): Promise<Result<User>> {
@@ -100,11 +106,19 @@ export class UsersService {
         break;
       }
       case PersonType.COMPANY: {
+        const slug = await generateUniqueSlug(
+          user.institutionName,
+          (s) => this.companyRepository.existsBySlug(s),
+        );
         const company = await this.createCompanyUseCase.execute({
           cnpj: user.cnpj,
           institutionName: user.institutionName,
           cnes: user.cnes,
           fkUserId: result.value.id,
+          slug,
+          status: 'ACTIVE',
+          acceptsDonations: true,
+          acceptsScheduling: true,
         });
 
         if (!company.isSuccess) {
@@ -286,11 +300,19 @@ export class UsersService {
         break;
       }
       case PersonType.COMPANY: {
+        const slug = await generateUniqueSlug(
+          data.institutionName ?? '',
+          (s) => this.companyRepository.existsBySlug(s),
+        );
         const company = await this.createCompanyUseCase.execute({
           cnpj: data.cnpj ?? '',
           institutionName: data.institutionName ?? '',
           cnes: data.cnes ?? '',
           fkUserId: userId,
+          slug,
+          status: 'ACTIVE',
+          acceptsDonations: true,
+          acceptsScheduling: true,
         });
         if (!company.isSuccess) {
           return ResultFactory.failure(company.error);
