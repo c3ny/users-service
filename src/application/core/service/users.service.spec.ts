@@ -22,6 +22,7 @@ import { UpdateUserAvatarUseCase } from '../../ports/in/user/updateUserAvatar.us
 import { RegisterOAuthUserUseCase } from '../../ports/in/user/registerOAuthUser.useCase';
 import { ChangeUserDataUseCase } from '../../ports/in/user/changeUserData.useCase';
 import { AppLoggerService } from '../../../shared/logger/app-logger.service';
+import { COMPANY_REPOSITORY } from '../../../constants';
 describe('UsersService', () => {
   let service: UsersService;
   let getUserUseCase: jest.Mocked<GetUserUseCase>;
@@ -53,6 +54,15 @@ describe('UsersService', () => {
     const mockBloodstockRepository = { initializeCompanyStock: jest.fn() };
     const mockRegisterOAuthUserUseCase = createMockUseCase();
     const mockChangeUserDataUseCase = createMockUseCase();
+    const mockCompanyRepository = {
+      findById: jest.fn(),
+      findByUserId: jest.fn(),
+      findByCnpj: jest.fn(),
+      existsBySlug: jest.fn().mockResolvedValue(false),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    };
 
     const mockAppLoggerService = {
       info: jest.fn(),
@@ -73,7 +83,10 @@ describe('UsersService', () => {
         { provide: ChangePasswordUseCase, useValue: mockChangePasswordUseCase },
         { provide: CreateDonorUseCase, useValue: mockCreateDonorUseCase },
         { provide: GetDonorByCpfUseCase, useValue: mockGetDonorByCpfUseCase },
-        { provide: GetDonorByUserIdUseCase, useValue: mockGetDonorByUserIdUseCase },
+        {
+          provide: GetDonorByUserIdUseCase,
+          useValue: mockGetDonorByUserIdUseCase,
+        },
         { provide: CreateCompanyUseCase, useValue: mockCreateCompanyUseCase },
         { provide: GenerateJwtUseCase, useValue: mockGenerateJwtUseCase },
         {
@@ -86,8 +99,12 @@ describe('UsersService', () => {
           useValue: mockGetCompanyByUserIdUseCase,
         },
         { provide: BloodstockRepository, useValue: mockBloodstockRepository },
-        { provide: RegisterOAuthUserUseCase, useValue: mockRegisterOAuthUserUseCase },
+        {
+          provide: RegisterOAuthUserUseCase,
+          useValue: mockRegisterOAuthUserUseCase,
+        },
         { provide: ChangeUserDataUseCase, useValue: mockChangeUserDataUseCase },
+        { provide: COMPANY_REPOSITORY, useValue: mockCompanyRepository },
       ],
     }).compile();
 
@@ -304,12 +321,14 @@ describe('UsersService', () => {
       const { password: _, ...createdUserWithoutPassword } = createdUser;
       expect(result.isSuccess).toBe(true);
       expect(result.value).toEqual(createdUserWithoutPassword);
-      expect(createCompanyUseCase.execute).toHaveBeenCalledWith({
-        cnpj: companyRequest.cnpj,
-        institutionName: companyRequest.institutionName,
-        cnes: companyRequest.cnes,
-        fkUserId: createdUser.id,
-      });
+      expect(createCompanyUseCase.execute).toHaveBeenCalledWith(
+        expect.objectContaining({
+          cnpj: companyRequest.cnpj,
+          institutionName: companyRequest.institutionName,
+          cnes: companyRequest.cnes,
+          fkUserId: createdUser.id,
+        }),
+      );
     });
 
     it('should return failure when donor CPF already exists', async () => {
@@ -453,19 +472,23 @@ describe('UsersService', () => {
       );
     });
 
-    it('should return failure when user is not found', async () => {
+    it('should return InvalidPassword and still run compare when user is not found (timing attack mitigation)', async () => {
       getUserByEmailUseCase.execute.mockResolvedValue(
         ResultFactory.failure(ErrorsEnum.UserNotFound),
       );
+      compareHashUseCase.execute.mockReturnValue(false);
 
       const result = await service.authenticate({
         ...authRequest,
         rememberMe: false,
       });
 
+      // P0.3: respond uniformly with InvalidPassword and always run scrypt
+      // compare (against a dummy hash) so response time does not leak whether
+      // the email exists.
       expect(result.isSuccess).toBe(false);
-      expect(result.error).toBe(ErrorsEnum.UserNotFound);
-      expect(compareHashUseCase.execute).not.toHaveBeenCalled();
+      expect(result.error).toBe(ErrorsEnum.InvalidPassword);
+      expect(compareHashUseCase.execute).toHaveBeenCalled();
     });
 
     it('should return failure when password is incorrect', async () => {

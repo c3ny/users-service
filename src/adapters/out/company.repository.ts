@@ -58,7 +58,9 @@ export class CompanyRepository implements CompanyRepositoryPort {
     return this.companyRepository.existsBy({ slug });
   }
 
-  async findAllActive(filters: ListActiveCompaniesFilters): Promise<PaginatedCompanies> {
+  async findAllActive(
+    filters: ListActiveCompaniesFilters,
+  ): Promise<PaginatedCompanies> {
     const where: FindOptionsWhere<Companies> = { status: 'ACTIVE' };
 
     if (filters.city) {
@@ -76,7 +78,7 @@ export class CompanyRepository implements CompanyRepositoryPort {
     });
 
     return {
-      companies: entities.map(CompanyMapper.toPublicListItem),
+      companies: entities.map((e) => CompanyMapper.toPublicListItem(e)),
       total,
     };
   }
