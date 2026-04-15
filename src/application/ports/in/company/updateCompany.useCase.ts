@@ -6,7 +6,10 @@ import { COMPANY_REPOSITORY } from '@/constants';
 import { ErrorsEnum } from '@/application/core/errors/errors.enum';
 
 export type UpdateCompanyInput = Partial<
-  Omit<Company, 'id' | 'cnpj' | 'cnes' | 'fkUserId' | 'slug' | 'institutionName'>
+  Omit<
+    Company,
+    'id' | 'cnpj' | 'cnes' | 'fkUserId' | 'slug' | 'institutionName'
+  >
 >;
 
 @Injectable()

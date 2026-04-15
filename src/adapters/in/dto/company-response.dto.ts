@@ -1,4 +1,8 @@
-import { CompanySchedule, CompanyStatus, CompanyType } from '@/application/core/domain/company.entity';
+import {
+  CompanySchedule,
+  CompanyStatus,
+  CompanyType,
+} from '@/application/core/domain/company.entity';
 
 export class CompanyScheduleDto {
   dayOfWeek: string;

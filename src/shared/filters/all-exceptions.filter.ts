@@ -37,8 +37,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const errorMessage =
       exception instanceof Error ? exception.message : String(exception);
 
-    const stack =
-      exception instanceof Error ? exception.stack : undefined;
+    const stack = exception instanceof Error ? exception.stack : undefined;
 
     const requestId = response.getHeader('X-Request-Id') as string | undefined;
 

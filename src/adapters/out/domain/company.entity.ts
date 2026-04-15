@@ -6,7 +6,11 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Users } from './user.entity';
-import { CompanySchedule, CompanyStatus, CompanyType } from '@/application/core/domain/company.entity';
+import {
+  CompanySchedule,
+  CompanyStatus,
+  CompanyType,
+} from '@/application/core/domain/company.entity';
 
 @Entity('company')
 export class Companies {
@@ -34,7 +38,12 @@ export class Companies {
   @Column({ type: 'text', nullable: true })
   description: string | null;
 
-  @Column({ type: 'varchar', length: 500, name: 'banner_image', nullable: true })
+  @Column({
+    type: 'varchar',
+    length: 500,
+    name: 'banner_image',
+    nullable: true,
+  })
   bannerImage: string | null;
 
   @Column({ type: 'varchar', length: 500, name: 'logo_image', nullable: true })
@@ -46,7 +55,12 @@ export class Companies {
   @Column({ type: 'varchar', length: 20, nullable: true })
   whatsapp: string | null;
 
-  @Column({ type: 'varchar', length: 255, name: 'contact_email', nullable: true })
+  @Column({
+    type: 'varchar',
+    length: 255,
+    name: 'contact_email',
+    nullable: true,
+  })
   contactEmail: string | null;
 
   @Column({ type: 'varchar', length: 255, nullable: true })

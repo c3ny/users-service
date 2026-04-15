@@ -12,10 +12,21 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { CompanyType, CompanySchedule } from '@/application/core/domain/company.entity';
+import {
+  CompanyType,
+  CompanySchedule,
+} from '@/application/core/domain/company.entity';
 
 export class CompanyScheduleDto implements CompanySchedule {
-  @IsIn(['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'])
+  @IsIn([
+    'MONDAY',
+    'TUESDAY',
+    'WEDNESDAY',
+    'THURSDAY',
+    'FRIDAY',
+    'SATURDAY',
+    'SUNDAY',
+  ])
   dayOfWeek: CompanySchedule['dayOfWeek'];
 
   @IsString()
@@ -42,12 +53,16 @@ export class UpdateCompanyDto {
 
   @IsOptional()
   @IsString()
-  @Matches(/^\d{10,11}$/, { message: 'phone deve conter 10 ou 11 dígitos numéricos' })
+  @Matches(/^\d{10,11}$/, {
+    message: 'phone deve conter 10 ou 11 dígitos numéricos',
+  })
   phone?: string;
 
   @IsOptional()
   @IsString()
-  @Matches(/^\d{10,11}$/, { message: 'whatsapp deve conter 10 ou 11 dígitos numéricos' })
+  @Matches(/^\d{10,11}$/, {
+    message: 'whatsapp deve conter 10 ou 11 dígitos numéricos',
+  })
   whatsapp?: string;
 
   @IsOptional()

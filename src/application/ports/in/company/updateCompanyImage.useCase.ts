@@ -35,7 +35,10 @@ export class UpdateCompanyImageUseCase {
         ? { bannerImage: imageUrl }
         : { logoImage: imageUrl };
 
-    const saved = await this.companyRepository.update({ ...existing, ...patch });
+    const saved = await this.companyRepository.update({
+      ...existing,
+      ...patch,
+    });
 
     return ResultFactory.success(saved);
   }

@@ -1,4 +1,7 @@
-import { CompanyRepositoryPort, PaginatedCompanies } from '../../out/company-repository.port';
+import {
+  CompanyRepositoryPort,
+  PaginatedCompanies,
+} from '../../out/company-repository.port';
 import { Result, ResultFactory } from '@/application/types/result.types';
 import { Inject, Injectable } from '@nestjs/common';
 import { COMPANY_REPOSITORY } from '@/constants';
@@ -17,7 +20,9 @@ export class ListActiveCompaniesUseCase {
     private readonly companyRepository: CompanyRepositoryPort,
   ) {}
 
-  async execute(input: ListActiveCompaniesInput): Promise<Result<PaginatedCompanies>> {
+  async execute(
+    input: ListActiveCompaniesInput,
+  ): Promise<Result<PaginatedCompanies>> {
     const page = Math.max(1, input.page);
     const limit = Math.min(50, Math.max(1, input.limit));
 
