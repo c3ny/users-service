@@ -32,6 +32,11 @@ import { UpdateUserAvatarUseCase } from './application/ports/in/user/updateUserA
 import { RegisterOAuthUserUseCase } from './application/ports/in/user/registerOAuthUser.useCase';
 import { HealthModule } from './modules/Health/health.module';
 import { GetCompanyByUserIdUseCase } from './application/ports/in/company/getCompanyByUserId.useCase';
+import { GetCompanyBySlugUseCase } from './application/ports/in/company/getCompanyBySlug.useCase';
+import { ListActiveCompaniesUseCase } from './application/ports/in/company/listActiveCompanies.useCase';
+import { UpdateCompanyUseCase } from './application/ports/in/company/updateCompany.useCase';
+import { UpdateCompanyImageUseCase } from './application/ports/in/company/updateCompanyImage.useCase';
+import { CompanyController } from './adapters/in/company.controller';
 import { BloodstockRepository } from './adapters/out/bloodstock.repository';
 
 @Module({
@@ -53,7 +58,7 @@ import { BloodstockRepository } from './adapters/out/bloodstock.repository';
     HashModule,
     HealthModule,
   ],
-  controllers: [UsersController],
+  controllers: [UsersController, CompanyController],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },
     { provide: AppLoggerService, useFactory: () => new AppLoggerService('users-service') },
@@ -70,6 +75,10 @@ import { BloodstockRepository } from './adapters/out/bloodstock.repository';
     GetDonorByUserIdUseCase,
     CreateCompanyUseCase,
     GetCompanyByUserIdUseCase,
+    GetCompanyBySlugUseCase,
+    ListActiveCompaniesUseCase,
+    UpdateCompanyUseCase,
+    UpdateCompanyImageUseCase,
     UpdateUserAvatarUseCase,
     RegisterOAuthUserUseCase,
     ChangeUserDataUseCase,

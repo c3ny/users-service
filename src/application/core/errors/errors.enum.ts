@@ -5,6 +5,7 @@ export enum ErrorsEnum {
   UserNotFoundError = 'UserNotFoundError',
   CompanyNotFoundError = 'CompanyNotFoundError',
   CompanyAlreadyExists = 'CompanyAlreadyExists',
+  CompanyUnauthorizedError = 'CompanyUnauthorizedError',
   DonorNotFoundError = 'DonorNotFoundError',
   DonorAlreadyExists = 'DonorAlreadyExists',
   DonorNotFound = 'DonorNotFound',
