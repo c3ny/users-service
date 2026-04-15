@@ -18,7 +18,9 @@ export interface CompanyRepositoryPort {
   findByUserId(userId: string): Promise<Company | null>;
   findBySlug(slug: string): Promise<Company | null>;
   existsBySlug(slug: string): Promise<boolean>;
-  findAllActive(filters: ListActiveCompaniesFilters): Promise<PaginatedCompanies>;
+  findAllActive(
+    filters: ListActiveCompaniesFilters,
+  ): Promise<PaginatedCompanies>;
   update(company: Company): Promise<Company>;
   delete(id: string): Promise<void>;
 }

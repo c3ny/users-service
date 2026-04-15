@@ -10,11 +10,19 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiParam,
+} from '@nestjs/swagger';
 import { JwtAuthGuard, JwtPayload } from './guards/jwt-auth.guard';
 import { CompanyOwnerGuard } from './guards/company-owner.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
-import { UpdateCompanyDto, UpdateCompanyImageDto } from './dto/update-company.dto';
+import {
+  UpdateCompanyDto,
+  UpdateCompanyImageDto,
+} from './dto/update-company.dto';
 import { CompanyPublicResponseDto } from './dto/company-response.dto';
 import { ListCompaniesQueryDto } from './dto/list-companies-query.dto';
 import {
@@ -44,7 +52,9 @@ export class CompanyController {
 
   @Get()
   @ApiOperation({ summary: 'Lista hemocentros ativos (público)' })
-  async list(@Query() query: ListCompaniesQueryDto): Promise<PaginatedCompaniesResponseDto> {
+  async list(
+    @Query() query: ListCompaniesQueryDto,
+  ): Promise<PaginatedCompaniesResponseDto> {
     const result = await this.listActiveCompaniesUseCase.execute({
       city: query.city,
       uf: query.uf,
@@ -53,7 +63,10 @@ export class CompanyController {
     });
 
     if (!result.isSuccess) {
-      throw new HttpException('Erro ao listar hemocentros', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Erro ao listar hemocentros',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
 
     const { companies, total } = result.value;
@@ -76,7 +89,9 @@ export class CompanyController {
   @UseGuards(JwtAuthGuard, CompanyOwnerGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Retorna dados da própria empresa (logado)' })
-  async getMe(@CurrentUser() user: JwtPayload): Promise<CompanyPublicResponseDto> {
+  async getMe(
+    @CurrentUser() user: JwtPayload,
+  ): Promise<CompanyPublicResponseDto> {
     const result = await this.getCompanyByUserIdUseCase.execute(user.id);
 
     if (!result.isSuccess) {
@@ -90,7 +105,9 @@ export class CompanyController {
   @UseGuards(JwtAuthGuard, CompanyOwnerGuard)
   @ApiBearerAuth()
   @Throttle({ default: { limit: 5, ttl: 60000 } })
-  @ApiOperation({ summary: 'Atualiza dados do perfil público da própria empresa' })
+  @ApiOperation({
+    summary: 'Atualiza dados do perfil público da própria empresa',
+  })
   async updateMe(
     @CurrentUser() user: JwtPayload,
     @Body() dto: UpdateCompanyDto,
@@ -102,12 +119,12 @@ export class CompanyController {
     );
 
     if (!result.isSuccess) {
-      this.handleUpdateError(result.error as ErrorsEnum);
+      this.handleUpdateError(result.error);
     }
 
     this.logger.info('Company profile updated', { companyId: user.companyId });
 
-    return this.toPublicDto(result.value!);
+    return this.toPublicDto(result.value);
   }
 
   @Patch('me/banner')
@@ -127,10 +144,10 @@ export class CompanyController {
     );
 
     if (!result.isSuccess) {
-      this.handleUpdateError(result.error as ErrorsEnum);
+      this.handleUpdateError(result.error);
     }
 
-    return this.toPublicDto(result.value!);
+    return this.toPublicDto(result.value);
   }
 
   @Patch('me/logo')
@@ -150,16 +167,20 @@ export class CompanyController {
     );
 
     if (!result.isSuccess) {
-      this.handleUpdateError(result.error as ErrorsEnum);
+      this.handleUpdateError(result.error);
     }
 
-    return this.toPublicDto(result.value!);
+    return this.toPublicDto(result.value);
   }
 
   @Get(':slug')
-  @ApiOperation({ summary: 'Retorna perfil público de um hemocentro pelo slug' })
+  @ApiOperation({
+    summary: 'Retorna perfil público de um hemocentro pelo slug',
+  })
   @ApiParam({ name: 'slug', description: 'Slug único do hemocentro' })
-  async getBySlug(@Param('slug') slug: string): Promise<CompanyPublicResponseDto> {
+  async getBySlug(
+    @Param('slug') slug: string,
+  ): Promise<CompanyPublicResponseDto> {
     const result = await this.getCompanyBySlugUseCase.execute(slug);
 
     if (!result.isSuccess) {

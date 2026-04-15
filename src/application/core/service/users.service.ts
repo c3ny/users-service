@@ -106,9 +106,8 @@ export class UsersService {
         break;
       }
       case PersonType.COMPANY: {
-        const slug = await generateUniqueSlug(
-          user.institutionName,
-          (s) => this.companyRepository.existsBySlug(s),
+        const slug = await generateUniqueSlug(user.institutionName, (s) =>
+          this.companyRepository.existsBySlug(s),
         );
         const company = await this.createCompanyUseCase.execute({
           cnpj: user.cnpj,
@@ -306,9 +305,8 @@ export class UsersService {
         break;
       }
       case PersonType.COMPANY: {
-        const slug = await generateUniqueSlug(
-          data.institutionName ?? '',
-          (s) => this.companyRepository.existsBySlug(s),
+        const slug = await generateUniqueSlug(data.institutionName ?? '', (s) =>
+          this.companyRepository.existsBySlug(s),
         );
         const company = await this.createCompanyUseCase.execute({
           cnpj: data.cnpj ?? '',
@@ -372,7 +370,10 @@ export class UsersService {
       isProfileComplete: true,
     });
 
-    this.logger.info('Profile completed', { userId, personType: data.personType });
+    this.logger.info('Profile completed', {
+      userId,
+      personType: data.personType,
+    });
 
     return ResultFactory.success({ user: safeUser, token });
   }

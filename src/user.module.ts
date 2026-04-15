@@ -50,9 +50,10 @@ import { BloodstockRepository } from './adapters/out/bloodstock.repository';
       ssl:
         process.env.DATABASE_SSL === 'false'
           ? false
-          : process.env.NODE_ENV === 'production' || process.env.DATABASE_SSL === 'true'
-          ? { rejectUnauthorized: false }
-          : false,
+          : process.env.NODE_ENV === 'production' ||
+              process.env.DATABASE_SSL === 'true'
+            ? { rejectUnauthorized: false }
+            : false,
     }),
     TypeOrmModule.forFeature([Users, Donors, Companies]),
     HashModule,
@@ -61,7 +62,10 @@ import { BloodstockRepository } from './adapters/out/bloodstock.repository';
   controllers: [UsersController, CompanyController],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },
-    { provide: AppLoggerService, useFactory: () => new AppLoggerService('users-service') },
+    {
+      provide: AppLoggerService,
+      useFactory: () => new AppLoggerService('users-service'),
+    },
     { provide: APP_INTERCEPTOR, useClass: HttpLoggingInterceptor },
     { provide: APP_FILTER, useClass: AllExceptionsFilter },
     CreateUserUseCase,
