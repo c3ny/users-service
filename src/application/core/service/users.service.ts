@@ -148,16 +148,22 @@ export class UsersService {
   ): Promise<Result<{ user: User; token: string }>> {
     const findByEmail = await this.getUserByEmailUseCase.execute(user.email);
 
-    if (!findByEmail.isSuccess) {
-      return ResultFactory.failure(findByEmail.error);
-    }
+    // Dummy scrypt hash (salt:derivedKey, 16B salt hex + 64B hash hex) to keep
+    // constant-time behavior when the email is not found — prevents user
+    // enumeration via timing side-channel.
+    const dummyHash =
+      '00000000000000000000000000000000:00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
+    const hashToCompare =
+      findByEmail.isSuccess && findByEmail.value.password
+        ? findByEmail.value.password
+        : dummyHash;
 
     const verifyPassword = this.compareHashUseCase.execute({
       password: user.password ?? '',
-      hash: findByEmail.value.password ?? '',
+      hash: hashToCompare,
     });
 
-    if (!verifyPassword) {
+    if (!findByEmail.isSuccess || !verifyPassword) {
       return ResultFactory.failure(ErrorsEnum.InvalidPassword);
     }
 
