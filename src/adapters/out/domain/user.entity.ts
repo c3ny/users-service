@@ -23,6 +23,12 @@ export class Users {
   @Column({ nullable: true })
   zipcode?: string;
 
+  @Column({ length: 20, nullable: true })
+  phone?: string;
+
+  @Column({ type: 'text', nullable: true })
+  description?: string;
+
   @Column({
     name: 'person_type',
   })

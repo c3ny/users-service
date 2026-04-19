@@ -24,7 +24,7 @@ export class ListActiveCompaniesUseCase {
     input: ListActiveCompaniesInput,
   ): Promise<Result<PaginatedCompanies>> {
     const page = Math.max(1, input.page);
-    const limit = Math.min(50, Math.max(1, input.limit));
+    const limit = Math.min(200, Math.max(1, input.limit));
 
     const result = await this.companyRepository.findAllActive({
       city: input.city,

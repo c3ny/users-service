@@ -18,7 +18,12 @@ import {
 } from '@/application/ports/in/user/registerOAuthUser.useCase';
 import { ChangeUserDataUseCase } from '@/application/ports/in/user/changeUserData.useCase';
 import { CompleteProfileDto } from '@/adapters/in/dto/complete-profile.dto';
-import { CreateUserRequest, PersonType } from '@/application/types/user.types';
+import { UpdateProfileDto } from '@/adapters/in/dto/update-profile.dto';
+import {
+  CreateUserRequest,
+  Gender,
+  PersonType,
+} from '@/application/types/user.types';
 import { CreateCompanyUseCase } from '@/application/ports/in/company/createCompany.useCase';
 import { GenerateJwtUseCase } from '@/modules/Hash/application/ports/in/generateJwt.useCase';
 import { UpdateUserAvatarUseCase } from '@/application/ports/in/user/updateUserAvatar.useCase';
@@ -28,8 +33,9 @@ import { BloodstockRepository } from '@/adapters/out/bloodstock.repository';
 import { sanitizeUser } from '../utils/sanitize-user.util';
 import { generateUniqueSlug } from '../utils/slug.util';
 import { CompanyRepositoryPort } from '@/application/ports/out/company-repository.port';
+import { DonorRepositoryPort } from '@/application/ports/out/donor-repository.port';
 import { Inject } from '@nestjs/common';
-import { COMPANY_REPOSITORY } from '@/constants';
+import { COMPANY_REPOSITORY, DONOR_REPOSITORY } from '@/constants';
 
 @Injectable()
 export class UsersService {
@@ -53,6 +59,8 @@ export class UsersService {
     private readonly changeUserDataUseCase: ChangeUserDataUseCase,
     @Inject(COMPANY_REPOSITORY)
     private readonly companyRepository: CompanyRepositoryPort,
+    @Inject(DONOR_REPOSITORY)
+    private readonly donorRepository: DonorRepositoryPort,
   ) {}
 
   async getUserById(id: string): Promise<Result<User>> {
@@ -63,6 +71,79 @@ export class UsersService {
     }
 
     return ResultFactory.success(sanitizeUser(user.value));
+  }
+
+  /**
+   * Retorna dados do donor (cpf, bloodType, birthDate, gender,
+   * lastDonationDate) para o usuario autenticado. null se nao houver donor
+   * registrado (usuario COMPANY ou DONOR com cadastro incompleto).
+   */
+  async getDonorProfile(userId: string) {
+    return this.getDonorByUserIdUseCase.execute(userId);
+  }
+
+  /**
+   * Edição parcial de perfil (PATCH /users/:id).
+   * Apenas o próprio usuário pode atualizar — controller valida ownership.
+   * Campos não-presentes no DTO permanecem inalterados.
+   */
+  async updateProfile(
+    id: string,
+    data: UpdateProfileDto,
+  ): Promise<Result<User>> {
+    const existing = await this.getUserUseCase.execute(id);
+
+    if (!existing.isSuccess) {
+      return ResultFactory.failure(existing.error);
+    }
+
+    const merged: Omit<User, 'id' | 'password'> = {
+      ...existing.value,
+      ...(data.name !== undefined && { name: data.name }),
+      ...(data.phone !== undefined && { phone: data.phone }),
+      ...(data.city !== undefined && { city: data.city }),
+      ...(data.uf !== undefined && { uf: data.uf }),
+      ...(data.zipcode !== undefined && { zipcode: data.zipcode }),
+      ...(data.description !== undefined && { description: data.description }),
+    };
+
+    const updated = await this.changeUserDataUseCase.execute({
+      id,
+      user: merged,
+    });
+
+    if (!updated.isSuccess) {
+      return ResultFactory.failure(updated.error);
+    }
+
+    // Atualiza campos de donor (gender, lastDonationDate) se o usuario for
+    // DONOR e enviou algum deles. Campos ausentes permanecem inalterados;
+    // lastDonationDate=null explicito limpa o valor ("nunca doei").
+    const shouldUpdateDonor =
+      existing.value.personType === PersonType.DONOR &&
+      (data.gender !== undefined || data.lastDonationDate !== undefined);
+
+    if (shouldUpdateDonor) {
+      const donor = await this.getDonorByUserIdUseCase.execute(id);
+      if (donor) {
+        const nextGender =
+          data.gender === undefined ? (donor.gender ?? null) : data.gender;
+        const nextLastDonationDate =
+          data.lastDonationDate === undefined
+            ? (donor.lastDonationDate ?? null)
+            : data.lastDonationDate === null
+              ? null
+              : new Date(data.lastDonationDate);
+
+        await this.donorRepository.update({
+          ...donor,
+          gender: nextGender as Gender | null,
+          lastDonationDate: nextLastDonationDate,
+        });
+      }
+    }
+
+    return ResultFactory.success(sanitizeUser(updated.value));
   }
 
   async createUser(user: CreateUserRequest): Promise<Result<User>> {
@@ -97,6 +178,8 @@ export class UsersService {
           bloodType: user.bloodType,
           birthDate: user.birthDate,
           fkUserId: result.value.id,
+          gender: user.gender ?? null,
+          lastDonationDate: user.lastDonationDate ?? null,
         });
 
         if (!donor.isSuccess) {
@@ -297,6 +380,10 @@ export class UsersService {
             bloodType: data.bloodType ?? '',
             birthDate: data.birthDate ? new Date(data.birthDate) : new Date(),
             fkUserId: userId,
+            gender: data.gender ?? null,
+            lastDonationDate: data.lastDonationDate
+              ? new Date(data.lastDonationDate)
+              : null,
           });
           if (!donor.isSuccess) {
             return ResultFactory.failure(donor.error);
@@ -338,6 +425,7 @@ export class UsersService {
         ...existingUser,
         city: data.city,
         uf: data.uf,
+        phone: data.phone,
         personType: data.personType,
         isProfileComplete: true,
       },

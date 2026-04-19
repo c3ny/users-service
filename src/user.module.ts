@@ -47,6 +47,16 @@ import { BloodstockRepository } from './adapters/out/bloodstock.repository';
       url: process.env.DATABASE_URL,
       entities: [Users, Donors, Companies],
       synchronize: process.env.NODE_ENV !== 'production',
+      // Migrations sao carregadas pelo glob do bundle compilado (dist) ou
+      // dos fontes (dev local sem build). Rodam automaticamente no startup
+      // — garante que prod (Neon, synchronize=false) e local (NODE_ENV=production
+      // no docker-compose) tenham schema atualizado sem ALTER TABLE manual.
+      migrations: [
+        __dirname + '/migrations/*.{js,ts}',
+        __dirname + '/migrations/*/!(*.d).{js,ts}',
+      ],
+      migrationsRun: true,
+      migrationsTableName: 'typeorm_migrations',
       ssl:
         process.env.DATABASE_SSL === 'false'
           ? false
