@@ -27,17 +27,12 @@ export class JwtAuthGuard implements CanActivate {
       throw new UnauthorizedException('No token provided');
     }
 
+    const secret = this.getJwtSecret();
+
+    let payload: JwtPayload;
     try {
-      const payload = jwt.verify(token, this.getJwtSecret()) as JwtPayload;
-      if (!payload.id || !payload.email) {
-        throw new UnauthorizedException('Invalid token payload');
-      }
-
-      request['user'] = payload;
-
-      return true;
+      payload = jwt.verify(token, secret) as JwtPayload;
     } catch (error) {
-      console.error('Error verifying JWT token:', error);
       if (error instanceof jwt.TokenExpiredError) {
         throw new UnauthorizedException('Token has expired');
       }
@@ -46,6 +41,13 @@ export class JwtAuthGuard implements CanActivate {
       }
       throw new UnauthorizedException('Token validation failed');
     }
+
+    if (!payload.id || !payload.email) {
+      throw new UnauthorizedException('Invalid token payload');
+    }
+
+    request['user'] = payload;
+    return true;
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
