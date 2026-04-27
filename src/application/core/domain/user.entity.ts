@@ -3,6 +3,8 @@ export class User {
   email: string;
   password?: string;
   name: string;
+  phone?: string;
+  description?: string;
   city: string;
   uf: string;
   zipcode?: string;

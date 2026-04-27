@@ -7,7 +7,7 @@ import {
   IsDateString,
   Matches,
 } from 'class-validator';
-import { PersonType } from '@/application/types/user.types';
+import { PersonType, Gender } from '@/application/types/user.types';
 
 export class BaseCreateUserDto {
   @ApiProperty({
@@ -65,6 +65,18 @@ export class BaseCreateUserDto {
   zipcode?: string;
 
   @ApiProperty({
+    description:
+      'Phone number — apenas dígitos: DDD + número (10 dígitos fixo, 11 dígitos celular)',
+    example: '11999998888',
+    pattern: '^\\d{10,11}$',
+  })
+  @IsString()
+  @Matches(/^\d{10,11}$/, {
+    message: 'Phone must contain 10 or 11 digits (DDD + número)',
+  })
+  phone: string;
+
+  @ApiProperty({
     description: 'Type of person',
     enum: PersonType,
     example: PersonType.DONOR,
@@ -96,13 +108,14 @@ export class CreateDonorDto extends BaseCreateUserDto {
   cpf: string;
 
   @ApiProperty({
-    description: 'Blood type',
+    description: 'Blood type — UNKNOWN para doadores que ainda não sabem o tipo',
     example: 'O+',
-    enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+    enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'UNKNOWN'],
   })
   @IsString()
-  @Matches(/^(A|B|AB|O)[+-]$/, {
-    message: 'Blood type must be one of: A+, A-, B+, B-, AB+, AB-, O+, O-',
+  @Matches(/^((A|B|AB|O)[+-]|UNKNOWN)$/, {
+    message:
+      'Blood type must be one of: A+, A-, B+, B-, AB+, AB-, O+, O-, UNKNOWN',
   })
   bloodType: string;
 
@@ -116,6 +129,31 @@ export class CreateDonorDto extends BaseCreateUserDto {
     { message: 'birthDate must be a valid date in YYYY-MM-DD format' },
   )
   birthDate: string;
+
+  @ApiProperty({
+    description:
+      'Sexo biologico — define intervalo minimo entre doacoes (Anvisa)',
+    enum: Gender,
+    example: Gender.MALE,
+  })
+  @IsEnum(Gender, { message: 'gender must be MALE or FEMALE' })
+  gender: Gender;
+
+  @ApiPropertyOptional({
+    description:
+      'Data da ultima doacao de sangue no formato YYYY-MM-DD. Omitir ou enviar null se nunca doou. Coletamos apenas mes/ano no frontend e enviamos o dia 01.',
+    example: '2025-03-01',
+    format: 'date',
+    nullable: true,
+  })
+  @IsOptional()
+  @IsDateString(
+    {},
+    {
+      message: 'lastDonationDate must be a valid date in YYYY-MM-DD format',
+    },
+  )
+  lastDonationDate?: string | null;
 }
 
 export class CreateCompanyDto extends BaseCreateUserDto {

@@ -4,6 +4,7 @@ import { Donors } from './domain/donor.entity';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Donor } from '@/application/core/domain/donor.entity';
+import { Gender } from '@/application/types/user.types';
 import { DonorMapper } from './mappers/donor.mapper';
 
 @Injectable()
@@ -49,12 +50,19 @@ export class DonorRepository implements DonorRepositoryPort {
       return null;
     }
 
+    const gender =
+      donor.gender === Gender.MALE || donor.gender === Gender.FEMALE
+        ? (donor.gender as Gender)
+        : null;
+
     return {
       id: donor.id,
       cpf: donor.cpf,
       bloodType: donor.bloodType ?? '',
       birthDate: donor.birthDate ?? new Date(),
       fkUserId: userId,
+      gender,
+      lastDonationDate: donor.lastDonationDate ?? null,
     };
   }
 }

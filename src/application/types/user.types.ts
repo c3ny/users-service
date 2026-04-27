@@ -3,10 +3,20 @@ export enum PersonType {
   COMPANY = 'COMPANY',
 }
 
+/**
+ * Sexo biologico do doador. Define o intervalo minimo entre doacoes
+ * conforme regra Anvisa: MALE 60 dias, FEMALE 90 dias.
+ */
+export enum Gender {
+  MALE = 'MALE',
+  FEMALE = 'FEMALE',
+}
+
 export interface BaseCreateUserRequest {
   email: string;
   password?: string;
   name: string;
+  phone: string;
   city: string;
   uf: string;
   zipcode?: string;
@@ -18,6 +28,8 @@ export interface CreateDonorRequest extends BaseCreateUserRequest {
   cpf: string;
   bloodType: string;
   birthDate: Date;
+  gender: Gender;
+  lastDonationDate?: Date | null;
 }
 
 export interface CreateCompanyRequest extends BaseCreateUserRequest {

@@ -22,7 +22,7 @@ import { UpdateUserAvatarUseCase } from '../../ports/in/user/updateUserAvatar.us
 import { RegisterOAuthUserUseCase } from '../../ports/in/user/registerOAuthUser.useCase';
 import { ChangeUserDataUseCase } from '../../ports/in/user/changeUserData.useCase';
 import { AppLoggerService } from '../../../shared/logger/app-logger.service';
-import { COMPANY_REPOSITORY } from '../../../constants';
+import { COMPANY_REPOSITORY, DONOR_REPOSITORY } from '../../../constants';
 describe('UsersService', () => {
   let service: UsersService;
   let getUserUseCase: jest.Mocked<GetUserUseCase>;
@@ -59,6 +59,15 @@ describe('UsersService', () => {
       findByUserId: jest.fn(),
       findByCnpj: jest.fn(),
       existsBySlug: jest.fn().mockResolvedValue(false),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    };
+
+    const mockDonorRepository = {
+      findById: jest.fn(),
+      findByUserId: jest.fn(),
+      findByCpf: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
@@ -105,6 +114,7 @@ describe('UsersService', () => {
         },
         { provide: ChangeUserDataUseCase, useValue: mockChangeUserDataUseCase },
         { provide: COMPANY_REPOSITORY, useValue: mockCompanyRepository },
+        { provide: DONOR_REPOSITORY, useValue: mockDonorRepository },
       ],
     }).compile();
 
@@ -286,6 +296,8 @@ describe('UsersService', () => {
         bloodType: donorRequest.bloodType,
         birthDate: donorRequest.birthDate,
         fkUserId: createdUser.id,
+        gender: null,
+        lastDonationDate: null,
       });
     });
 

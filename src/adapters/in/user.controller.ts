@@ -48,6 +48,7 @@ import {
 import { AuthenticateUserDto } from './dto/authenticate-user.dto';
 import { OAuthGoogleDto, OAuthAppleDto } from './dto/oauth-user.dto';
 import { CompleteProfileDto } from './dto/complete-profile.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 import * as appleSignin from 'apple-signin-auth';
 
 @ApiTags('Users')
@@ -112,6 +113,29 @@ export class UsersController {
     }
 
     return result.value;
+  }
+
+  @Get(':id/donor')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Get donor profile for user',
+    description:
+      'Retorna dados especificos de doador (bloodType, birthDate, gender, lastDonationDate). Retorna 404 se o usuario nao for DONOR ou nao tiver donor cadastrado.',
+  })
+  @ApiBearerAuth('JWT-auth')
+  async getDonorByUser(
+    @Param('id') id: string,
+    @CurrentUser() user: JwtPayload,
+  ) {
+    if (user.id !== id) {
+      throw new ForbiddenException('You can only access your own data');
+    }
+
+    const donor = await this.usersService.getDonorProfile(id);
+    if (!donor) {
+      throw new HttpException('Donor not found', HttpStatus.NOT_FOUND);
+    }
+    return donor;
   }
 
   @Post()
@@ -379,6 +403,40 @@ export class UsersController {
     }
 
     const result = await this.usersService.uploadAvatar(id, avatarPath);
+
+    if (!result.isSuccess) {
+      switch (result.error) {
+        case ErrorsEnum.UserNotFound:
+          throw new HttpException(result.error, HttpStatus.NOT_FOUND);
+        default:
+          throw new HttpException(result.error, HttpStatus.BAD_REQUEST);
+      }
+    }
+
+    return result.value;
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Update user profile',
+    description:
+      'Edição parcial do próprio perfil. Apenas o usuário autenticado pode atualizar seu próprio registro. Campos ausentes permanecem inalterados.',
+  })
+  @ApiBearerAuth('JWT-auth')
+  @ApiResponse({ status: 200, type: UserResponseDto })
+  @ApiResponse({ status: 403, description: 'Forbidden — outro usuário' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  async updateProfile(
+    @Param('id') id: string,
+    @Body() body: UpdateProfileDto,
+    @CurrentUser() user: JwtPayload,
+  ): Promise<User> {
+    if (user.id !== id) {
+      throw new ForbiddenException('You can only update your own profile');
+    }
+
+    const result = await this.usersService.updateProfile(id, body);
 
     if (!result.isSuccess) {
       switch (result.error) {

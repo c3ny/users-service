@@ -8,6 +8,8 @@ export class UserMapper {
       email: users.email,
       password: users.password,
       name: users.name,
+      phone: users.phone,
+      description: users.description,
       city: users.city,
       uf: users.uf,
       zipcode: users.zipcode,
@@ -26,6 +28,8 @@ export class UserMapper {
     users.email = user.email;
     users.password = user.password;
     users.name = user.name;
+    users.phone = user.phone;
+    users.description = user.description;
     users.city = user.city;
     users.uf = user.uf;
     users.zipcode = user.zipcode ?? '';
