@@ -19,11 +19,7 @@ import {
 import { ChangeUserDataUseCase } from '@/application/ports/in/user/changeUserData.useCase';
 import { CompleteProfileDto } from '@/adapters/in/dto/complete-profile.dto';
 import { UpdateProfileDto } from '@/adapters/in/dto/update-profile.dto';
-import {
-  CreateUserRequest,
-  Gender,
-  PersonType,
-} from '@/application/types/user.types';
+import { CreateUserRequest, PersonType } from '@/application/types/user.types';
 import { CreateCompanyUseCase } from '@/application/ports/in/company/createCompany.useCase';
 import { GenerateJwtUseCase } from '@/modules/Hash/application/ports/in/generateJwt.useCase';
 import { UpdateUserAvatarUseCase } from '@/application/ports/in/user/updateUserAvatar.useCase';
@@ -120,7 +116,7 @@ export class UsersService {
     // DONOR e enviou algum deles. Campos ausentes permanecem inalterados;
     // lastDonationDate=null explicito limpa o valor ("nunca doei").
     const shouldUpdateDonor =
-      existing.value.personType === PersonType.DONOR &&
+      (existing.value.personType as PersonType) === PersonType.DONOR &&
       (data.gender !== undefined || data.lastDonationDate !== undefined);
 
     if (shouldUpdateDonor) {
@@ -137,7 +133,7 @@ export class UsersService {
 
         await this.donorRepository.update({
           ...donor,
-          gender: nextGender as Gender | null,
+          gender: nextGender,
           lastDonationDate: nextLastDonationDate,
         });
       }
