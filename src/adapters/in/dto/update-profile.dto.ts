@@ -56,7 +56,8 @@ export class UpdateProfileDto {
   @ApiPropertyOptional({
     description:
       'Texto livre sobre o doador — usado por matching futuro LLM+RAG',
-    example: 'Doador desde 2015, faço doações regulares na Fundação Pró-Sangue.',
+    example:
+      'Doador desde 2015, faço doações regulares na Fundação Pró-Sangue.',
   })
   @IsOptional()
   @IsString()
