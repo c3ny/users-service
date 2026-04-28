@@ -108,7 +108,8 @@ export class CreateDonorDto extends BaseCreateUserDto {
   cpf: string;
 
   @ApiProperty({
-    description: 'Blood type — UNKNOWN para doadores que ainda não sabem o tipo',
+    description:
+      'Blood type — UNKNOWN para doadores que ainda não sabem o tipo',
     example: 'O+',
     enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'UNKNOWN'],
   })

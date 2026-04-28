@@ -54,8 +54,7 @@ describe('JwtAuthGuard', () => {
     const request = { headers: { authorization: `Bearer ${token}` } };
     const ctx = mockExecutionContext(request);
     expect(guard.canActivate(ctx)).toBe(true);
-    const populated = (ctx.switchToHttp().getRequest() as { user?: JwtPayload })
-      .user;
+    const populated = ctx.switchToHttp().getRequest().user;
     expect(populated?.id).toBe(validPayload.id);
     expect(populated?.email).toBe(validPayload.email);
   });
