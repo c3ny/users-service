@@ -30,13 +30,14 @@ async function bootstrap() {
 
   setupSwagger(app);
 
-  await app.listen(process.env.PORT ?? 3002);
+  const port = Number(process.env.PORT) || 3001;
+  await app.listen(port, "0.0.0.0");
 
   console.log(
-    `🚀 Users Service running on: http://localhost:${process.env.PORT ?? 3002}`,
+    `🚀 Users Service running on: http://localhost:${port}`,
   );
   console.log(
-    `📚 API Documentation: http://localhost:${process.env.PORT ?? 3002}/api-docs`,
+    `📚 API Documentation: http://localhost:${port}/api-docs`,
   );
 }
 
