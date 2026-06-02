@@ -32,6 +32,15 @@ jobs:
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/users-service:hml
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/users-service:${{ github.sha }}
 
+      - name: Configurar secrets do Container App
+        run: |
+            az containerapp secret set \
+                --name ${{ secrets.AZURE_WEBAPP_NAME_HML }} \
+                --resource-group ${{ secrets.AZURE_RESOURCE_GROUP_HML }} \
+                --secrets \
+                database-url="${{ secrets.DATABASE_URL_HML }}" \
+                jwt-secret="${{ secrets.JWT_SECRET_HML }}"
+
       - name: Deploy Azure Container App
         uses: azure/container-apps-deploy-action@v1
         with:
